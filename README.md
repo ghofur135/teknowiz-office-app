@@ -1,0 +1,181 @@
+# WizBilling - TeknoWiz Invoice & Billing Management System
+
+Sistem aplikasi mandiri (*standalone micro-app*) manajemen faktur tagihan (*invoice*), surat penawaran harga (*quotation*), pencatatan transaksi kas, dan kwitansi pembayaran resmi (*receipt*) untuk **PT Tekno Wiz Indonesia**.
+
+---
+
+## 🏢 Identitas Resmi Perusahaan
+
+* **Badan Usaha**: **PT Tekno Wiz Indonesia**
+* **Slogan**: *Membangun Ekosistem Digital Berkelanjutan*
+* **Domisili**: Slawi, Kabupaten Tegal, Jawa Tengah, Indonesia (52411)
+* **Kontak**: `halo@teknowiz.id` | WhatsApp: `+62 878 1127 8630` | Web: `https://teknowiz.id`
+* **Rekening Resmi**: **Bank Mandiri** `138-00-2299881-1` a.n. **PT TEKNO WIZ INDONESIA**
+* **NPWP Badan**: `31.849.201.8-501.000` | **NIB**: `0220109123456`
+* **Desain UI**: *Corporate Clean* (Slate 900 `#0F172A`, Sky Blue `#0284C7`), **bebas glassmorphism / gradient blobs / neon glow**, dengan presisi cetak 1 lembar A4 (`@media print`).
+* **Aset Resmi Terpasang**:
+  * Logo Perusahaan: `public/images/logo.png`
+  * Gambar Banner Login: `public/images/login-banner.png`
+  * Stempel Basah PT: `public/images/stamp-teknowiz.png`
+
+---
+
+## 🔐 Kredensial Login Resmi (Authentication)
+
+Sistem telah dilengkapi dengan portal otentikasi login resmi dan proteksi route (Middleware):
+* **Halaman Login**: `http://localhost:3000/login`
+* **Email / Username**: `dhimas@teknowiz.id`
+* **Kata Sandi (Password)**: `Teknowiz26#!`
+* **Nama Pengguna**: Dhimas Ghofur A. F. (Direktur Utama / Admin)
+
+---
+
+## 🚀 Fitur Utama Sistem
+
+1. **Dashboard Overview Keuangan**
+   * Metrik KPI realtime: Total Omzet Bulan Ini, Piutang Tertunda (*Unpaid/Overdue*), dan Kas Masuk (*Cash Inflow*).
+   * Peringatan faktur jatuh tempo otomatis beserta tombol shortcut pengingat WhatsApp ke PIC klien.
+   * Tabel transaksi terbaru dan menu pintasan dokumen.
+
+2. **Manajemen Faktur Tagihan (Invoices)**
+   * Format penomoran otomatis berurutan per bulan: `INV/TW/YYYYMM/000` dengan sistem locking sequence bebas nomor ganda/lompat.
+   * Kalkulasi finansial komprehensif: Subtotal, Diskon Item, Diskon Global (Fixed / Persen), DPP, PPN (11% / 12%), dan potongan PPh 23 (2%).
+   * Filter status dinamis: *Draft, Terkirim (Sent), Sebagian (Partial), Lunas (Paid), Jatuh Tempo (Overdue), Dibatalkan (Cancelled)*.
+   * Tombol *Share WhatsApp* dengan teks pesan penagihan otomatis yang rapi.
+   * Pratinjau & Cetak A4 beresolusi tinggi dengan QR Code verifikasi dokumen.
+
+3. **Surat Penawaran Harga (Quotations)**
+   * Format penomoran resmi: `QUO/TW/YYYYMM/000`.
+   * Memuat masa berlaku penawaran, termin pembayaran, dan spesifikasi paket layanan.
+   * **Konversi 1-Klik ke Invoice (*Convert to Invoice*)**: Otomatis membuat faktur `INV/TW/...` baru, menyalin seluruh baris item, dan mereferensikan nomor penawaran asal.
+   * Cetak Surat Penawaran A4 resmi lengkap dengan kolom persetujuan (*Client Acceptance Sign Block*).
+
+4. **Buku Kwitansi Resmi & Pembayaran (Official Receipts)**
+   * Format penomoran resmi: `KWT/TW/YYYYMM/000`.
+   * **Generator Terbilang Otomatis**: Parser angka rupiah ke teks bahasa Indonesia (contoh: `Rp 15.000.000` ➡️ *"Lima Belas Juta Rupiah"*).
+   * Pencatatan pembayaran parsial (DP / Termin) dan pelunasan. Sistem otomatis menghitung sisa tagihan (*balance due*) dan mengubah status faktur menjadi *PARTIAL* atau *PAID*.
+   * Cetak Kwitansi Resmi A4 berbingkai formal ganda, kotak nominal rupiah, kotak meterai tempel (jika $\ge$ Rp 5.000.000), dan stempel digital.
+
+5. **Master Data Klien (Mini-CRM)**
+   * Manajemen klien instansi B2G (Pemda, RSUD), korporasi B2B, dan UMKM.
+   * Menyimpan kode klien otomatis (`CLI-YYYY-000`), nama instansi, nama & WhatsApp PIC, email, NPWP, dan alamat.
+
+6. **Katalog Produk SaaS & Jasa IT**
+   * Katalog layanan bawaan TeknoWiz:
+     * *PulseTV Control - Cloud Signage*
+     * *Wizly - Smart Helpdesk & Ticketing*
+     * *WizPortal - Enterprise Intranet & SSO*
+     * *InfraMate - Server & Network Monitoring*
+     * *DaganganGO - POS & Inventory Omnichannel*
+     * *TeknoPharm - SIM Farmasi & Klinik Bridging SatuSehat*
+     * *Jasa Konsultasi TI, Integrasi API B2G, & Maintenance Tahunan*.
+
+7. **Pengaturan Identitas Legal & Rekening PT**
+   * Form pengaturan profil perusahaan, domisili, email/telepon, NPWP, NIB, dan rekening perbankan penampung tagihan yang tersinkronisasi ke seluruh dokumen cetak.
+
+---
+
+## 🛠️ Tech Stack & Arsitektur
+
+* **Framework**: Next.js 14 (App Router & Route Handlers)
+* **Bahasa**: TypeScript
+* **Database**: SQLite 3 (`@libsql/client`) dengan mode **WAL (Write-Ahead Logging)** dan `busy_timeout` untuk konkurensi optimal tanpa konfigurasi rumit.
+* **Styling**: Tailwind CSS + Lucide React Icons (Corporate Clean styling)
+* **Print Engine**: Pixel-Perfect High-Res Browser Print CSS (`@page { size: A4; margin: 10mm 12mm; }`)
+
+---
+
+## 📂 Struktur Direktori Proyek
+
+```text
+teknowiz-office-app/
+├── data/
+│   └── billing.sqlite3              # Database SQLite lokal (WAL mode)
+├── scripts/
+│   └── seed.js                      # Script inisialisasi & demo data
+├── src/
+│   ├── app/
+│   │   ├── (dashboard)/
+│   │   │   ├── layout.tsx           # Layout dashboard dengan Sidebar
+│   │   │   ├── page.tsx             # Dashboard KPI & Ringkasan Transaksi
+│   │   │   ├── invoices/            # Modul Faktur Tagihan
+│   │   │   ├── quotations/          # Modul Surat Penawaran
+│   │   │   ├── receipts/            # Buku Kwitansi Resmi
+│   │   │   ├── clients/             # Master Klien (Mini-CRM)
+│   │   │   ├── products/            # Katalog Produk & Jasa
+│   │   │   ├── legality/            # Arsip Dokumen Legalitas PT (Akta, NIB, NPWP, SK)
+│   │   │   └── settings/            # Pengaturan PT & Rekening
+│   │   ├── print/
+│   │   │   ├── invoice/[id]/        # Layout Cetak A4 Faktur Tagihan
+│   │   │   ├── quotation/[id]/      # Layout Cetak A4 Surat Penawaran
+│   │   │   └── receipt/[id]/        # Layout Cetak A4 Kwitansi Sah
+│   │   ├── verify/                  # Portal Verifikasi Publik Dokumen (Online Mode)
+│   │   ├── api/                     # Backend API Handlers (Auth, Docs, Verify, Legality)
+│   │   ├── globals.css              # Corporate styles & @media print A4
+│   │   └── layout.tsx               # Root Layout & Favicon Metadata
+│   ├── components/                  # Komponen UI Reusable
+│   │   ├── Sidebar.tsx
+│   │   ├── Navbar.tsx
+│   │   ├── DocumentForm.tsx
+│   │   ├── PaymentModal.tsx
+│   │   ├── StatusBadge.tsx
+│   │   ├── CompanyBadge.tsx
+│   │   ├── OfficialStamp.tsx        # Render stempel resmi PT dengan efek wet ink
+│   │   └── DocumentQrCode.tsx
+│   └── lib/                         # Logika Bisnis & Utilitas
+│       ├── db.ts                    # SQLite LibSQL connection & init
+│       ├── types.ts                 # TypeScript domain types
+│       ├── calculator.ts            # Formula perhitungan PPN/PPh 23/Diskon
+│       ├── terbilang.ts             # Parser Rupiah ke teks Indonesia
+│       └── number-generator.ts      # Generator nomor urut QUO/INV/KWT
+├── public/
+│   ├── favicon.ico                  # Favicon fallback browser
+│   └── images/
+│       ├── favicon.png              # Favicon resmi TeknoWiz (TW monogram)
+│       ├── logo.png                 # Logo resmi PT Tekno Wiz Indonesia
+│       ├── login-banner.png         # Banner visual korporat halaman login
+│       └── stamp-teknowiz.png       # Stempel basah resmi PT Tekno Wiz Indonesia
+├── package.json
+└── tsconfig.json
+```
+
+---
+
+## ⚡ Panduan Menjalankan Aplikasi
+
+### 1. Prasyarat
+* Node.js versi 18 atau lebih baru (Disarankan Node.js v20+)
+* npm
+
+### 2. Konfigurasi Environment (`.env`)
+Salin file `.env.example` menjadi `.env.local` atau `.env`:
+```bash
+cp .env.example .env.local
+```
+Variabel yang dapat dikonfigurasi:
+* `NEXT_PUBLIC_APP_URL`: URL publik aplikasi (contoh: `https://billing.teknowiz.id`). Digunakan untuk tautan verifikasi online barcode. *(Catatan: URL ini juga bisa diubah langsung dari web UI melalui menu **Pengaturan PT**)*.
+* `SESSION_SECRET`: Kunci rahasia untuk HMAC enkripsi session login.
+* `LIBSQL_URL` & `LIBSQL_AUTH_TOKEN`: *(Opsional)* Jika ingin menghubungkan ke database Turso Cloud SQLite.
+
+### 3. Inisialisasi Data Demo
+Jalankan perintah berikut untuk mengisi master data default (Profil PT Tekno Wiz, Klien awal, Katalog SaaS, dan sampel transaksi):
+
+```bash
+npm run seed
+```
+
+### 4. Menjalankan di Mode Pengembangan (Development)
+```bash
+npm run dev
+```
+Buka browser di [http://localhost:3000](http://localhost:3000).
+
+### 5. Build untuk Produksi
+```bash
+npm run build
+npm start
+```
+
+---
+
+*Disusun untuk operasional resmi PT Tekno Wiz Indonesia.*
