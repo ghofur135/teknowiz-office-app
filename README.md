@@ -92,7 +92,11 @@ teknowiz-office-app/
 ├── data/
 │   └── billing.sqlite3              # Database SQLite lokal (WAL mode)
 ├── scripts/
-│   └── seed.js                      # Script inisialisasi & demo data
+│   ├── seed.js                      # Script inisialisasi & demo data
+│   ├── restore-vps.js               # CLI interaktif auto-restore data ke VPS (SSH/SFTP)
+│   ├── backup.js                    # Pembuat snapshot arsip lokal (.tar.gz)
+│   └── vps-deploy.sh                # Script runner deploy otomatis PM2 di VPS
+├── ecosystem.config.js              # Konfigurasi resmi PM2 production Next.js
 ├── src/
 │   ├── app/
 │   │   ├── (dashboard)/
