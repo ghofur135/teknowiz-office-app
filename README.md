@@ -213,4 +213,58 @@ tar -xzf wizbilling-backup-*.tar.gz
 
 ---
 
+## ⚡ Menjalankan Aplikasi di VPS dengan PM2
+
+Aplikasi ini telah dilengkapi dengan konfigurasi resmi PM2 [`ecosystem.config.js`](./ecosystem.config.js) yang dioptimasi khusus untuk Next.js 14 & SQLite:
+* `watch: false` & `ignore_watch`: Mencegah server me-restart sendiri saat database SQLite menulis data atau ada dokumen upload baru.
+* `max_memory_restart: '512M'`: Menjaga stabilitas memori server.
+* `logs/`: Mengarahkan log error & stdout ke direktori logs dengan format timestamp.
+
+### 1. Cara Cepat: Sekali Jalan via Script Deploy
+Di dalam folder aplikasi di VPS:
+```bash
+npm run vps:deploy
+```
+*(Script ini otomatis mengecek PM2, install deps, build Next.js, start/reload PM2, dan menjalankan `pm2 save`).*
+
+### 2. Perintah Kontrol PM2
+```bash
+npm run pm2:start    # Menjalankan aplikasi di background via PM2
+npm run pm2:logs     # Memantau realtime logs aplikasi
+npm run pm2:status   # Memeriksa status proses & penggunaan RAM
+npm run pm2:restart  # Restart aplikasi
+npm run pm2:reload   # Reload zero-downtime
+npm run pm2:stop     # Menghentikan proses
+```
+
+### 3. Konfigurasi Nginx Reverse Proxy (Opsional / Rekomendasi Domain)
+Buat file konfigurasi `/etc/nginx/sites-available/teknowiz-billing`:
+```nginx
+server {
+    server_name billing.teknowiz.id; # Ganti dengan domain Anda
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    client_max_body_size 25M; # Agar aman saat upload dokumen legalitas PDF
+}
+```
+Aktifkan dan pasang SSL gratis:
+```bash
+sudo ln -s /etc/nginx/sites-available/teknowiz-billing /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+sudo certbot --nginx -d billing.teknowiz.id
+```
+
+---
+
 *Disusun untuk operasional resmi PT Tekno Wiz Indonesia.*
