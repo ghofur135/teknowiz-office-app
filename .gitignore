@@ -31,6 +31,11 @@ data/*.sqlite3-shm
 public/uploads/legality/*
 !public/uploads/legality/.gitkeep
 
+# Local data backups
+/backups/
+*.tar.gz
+*.zip
+
 # OS generated files
 .DS_Store
 Thumbs.db

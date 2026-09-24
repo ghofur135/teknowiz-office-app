@@ -178,4 +178,39 @@ npm start
 
 ---
 
+## 🚀 Migrasi & Auto-Restore ke VPS
+
+Untuk memindahkan database lokal (`data/billing.sqlite3`) beserta seluruh berkas dokumen legalitas resmi (`public/uploads/legality/*.pdf`) ke server VPS tanpa perlu re-upload manual di web:
+
+### Opsi A: Auto Restore via Script SSH/SFTP (Rekomendasi)
+Cukup jalankan satu perintah berikut di terminal komputer lokal:
+```bash
+npm run restore:vps
+```
+Script interaktif akan meminta input:
+1. **IP VPS / Hostname** (Wajib)
+2. **Port SSH** (Default: `22`)
+3. **Username SSH** (Default: `root`)
+4. **Password SSH** (Wajib, input ter-masking `*` demi keamanan)
+5. **Direktori Aplikasi di VPS** (Default: `/var/www/teknowiz-office-app`)
+
+Script otomatis:
+* Melakukan `PRAGMA wal_checkpoint(TRUNCATE)` pada SQLite lokal agar data 100% tersinkron.
+* Membuat folder tujuan di VPS jika belum ada (`mkdir -p`).
+* Mengunggah `data/billing.sqlite3` dan seluruh file PDF legalitas via SFTP.
+* Mengatur *permission* Linux (`chmod 755` & `chmod 644`).
+* Melakukan auto-reload PM2 jika terdeteksi di VPS.
+
+### Opsi B: Backup Bundler Manual (.tar.gz)
+Untuk membuat arsip snapshot lengkap (database + uploads):
+```bash
+npm run backup
+```
+File arsip tersimpan di folder `backups/wizbilling-backup-*.tar.gz`. Di VPS cukup jalankan:
+```bash
+tar -xzf wizbilling-backup-*.tar.gz
+```
+
+---
+
 *Disusun untuk operasional resmi PT Tekno Wiz Indonesia.*

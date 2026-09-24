@@ -6,6 +6,25 @@ Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.co
 
 ---
 
+## [1.7.0] - 2026-09-24
+
+### 🚀 Fitur Baru: Script Auto-Restore & Sinkronisasi VPS (`npm run restore:vps`)
+- **Interactive SSH/SFTP Migration CLI (`scripts/restore-vps.js`)**:
+  - Otomatisasi migrasi penuh dari lokal ke VPS server tanpa perlu upload berkas ulang manual di antarmuka web.
+  - Input interaktif dengan validasi:
+    - **IP VPS / Host**: Wajib diisi.
+    - **Port SSH**: Fleksibel (default `22`).
+    - **User VPS**: Fleksibel (default `root`).
+    - **Password VPS**: Wajib dengan proteksi *masked input* (`*`).
+    - **Direktori Remote**: Default `/var/www/teknowiz-office-app`.
+  - **Auto WAL-Checkpoint**: Menjalankan `PRAGMA wal_checkpoint(TRUNCATE)` otomatis pada SQLite lokal sebelum upload agar data transaksi teranyar 100% konsisten.
+  - **SFTP Stream Pipeline**: Mengunggah file database `billing.sqlite3` dan seluruh berkas PDF legalitas perusahaan (`public/uploads/legality/*.pdf`) dengan indikator progres ukuran.
+  - **Linux Best Practices**: Menjalankan `mkdir -p`, pengaturan permission (`chmod 755` & `chmod 644`), dan deteksi auto-reload PM2.
+- **Local Backup Bundler (`scripts/backup.js` / `npm run backup`)**:
+  - Menyediakan pembuatan arsip snapshot `.tar.gz` lokal yang menggabungkan database dan berkas legalitas.
+
+---
+
 ## [1.6.0] - 2026-09-24
 
 ### 👥 Fitur Baru: Modal Pratinjau Profil Klien & Mini-CRM (`/clients`)
