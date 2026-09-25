@@ -45,7 +45,7 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="no-print w-64 bg-slate-900 border-r border-slate-800 text-slate-300 flex flex-col shrink-0 h-screen sticky top-0 select-none">
+    <aside suppressHydrationWarning className="no-print w-64 bg-slate-900 border-r border-slate-800 text-slate-300 flex flex-col shrink-0 h-screen sticky top-0 select-none">
       {/* Brand Header */}
       <div className="p-5 border-b border-slate-800 bg-slate-950/40">
         <div className="flex items-center gap-3">
