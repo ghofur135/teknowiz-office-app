@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   CheckCircle2
 } from 'lucide-react';
+import { APP_VERSION } from '@/lib/version';
 
 function LoginForm() {
   const router = useRouter();
@@ -153,7 +154,7 @@ function LoginForm() {
             <Building2 className="w-3.5 h-3.5 text-slate-500" />
             <span>Slawi, Kabupaten Tegal, Jawa Tengah</span>
           </div>
-          <span className="font-mono text-slate-500">v1.1.0</span>
+          <span className="font-mono text-slate-500">{APP_VERSION}</span>
         </div>
       </div>
 

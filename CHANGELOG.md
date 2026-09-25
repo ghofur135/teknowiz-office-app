@@ -29,6 +29,13 @@ Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.co
   - **Prototype / Object Injection**: Sanitasi ketat memeriksa tipe data primitif `string` sebelum pemrosesan.
   - **DoS / Buffer Overflow**: Pembatasan panjang input email ($\le 100$ karakter) dan password ($\le 128$ karakter) untuk mencegah serangan *Regular Expression Denial of Service* (ReDoS) dan *memory exhaustion*.
 
+### 🏷️ Sinkronisasi Versi Otomatis (Single Source of Truth)
+- **Sentralisasi Versi Sistem (`package.json`, `src/lib/version.ts`, `next.config.js`)**:
+  - Memperbarui versi pada `package.json` menjadi `1.11.0` agar selaras secara presisi dengan riwayat rilis `CHANGELOG.md`.
+  - Membuat modul sentral [`src/lib/version.ts`](file:///d:/my-project/teknowiz-office-app/src/lib/version.ts) yang mengimpor nomor versi secara langsung dari `package.json` (`APP_VERSION`).
+  - Mengonfigurasi `next.config.js` untuk mengekspos environment variable `NEXT_PUBLIC_APP_VERSION`.
+  - Menggantikan string versi hardcoded pada footer bawah Sidebar ([`Sidebar.tsx`](file:///d:/my-project/teknowiz-office-app/src/components/Sidebar.tsx)) dan halaman login ([`login/page.tsx`](file:///d:/my-project/teknowiz-office-app/src/app/login/page.tsx)) dengan variabel dinamis `{APP_VERSION}` sehingga setiap kali ada rilis versi baru di masa mendatang, seluruh tampilan antarmuka (Web UI) akan otomatis tersinkronisasi tanpa perlu diedit manual.
+
 ---
 
 ## [1.10.0] - 2026-09-25

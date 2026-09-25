@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSidebar } from '@/context/SidebarContext';
+import { APP_VERSION } from '@/lib/version';
 import {
   LayoutDashboard,
   FileText,
@@ -145,7 +146,7 @@ function SidebarContent({ isMobile = false, onClose, onLinkClick }: SidebarConte
 
         <div className="flex items-center justify-between px-2 text-[10px] text-slate-500">
           <span>Slawi, Tegal (Jateng)</span>
-          <span className="text-sky-400 font-mono">v1.0.0</span>
+          <span className="text-sky-400 font-mono font-medium">{APP_VERSION}</span>
         </div>
       </div>
     </div>
