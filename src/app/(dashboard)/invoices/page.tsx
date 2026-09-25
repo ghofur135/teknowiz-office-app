@@ -73,15 +73,15 @@ export default function InvoicesPage() {
         subtitle="Kelola penerbitan faktur tagihan resmi PT Tekno Wiz Indonesia"
       />
 
-      <main className="p-6 md:p-8 space-y-6 flex-1 overflow-y-auto">
+      <main className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 flex-1 overflow-y-auto">
         {/* Header Bar: Filter tabs & Action */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b sm:border-b-0 border-slate-200">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 border-b lg:border-b-0 border-slate-200 -mx-4 px-4 sm:mx-0 sm:px-0">
             {tabs.map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => setStatusFilter(tab.key)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors shrink-0 ${
                   statusFilter === tab.key
                     ? 'bg-sky-600 text-white shadow-xs'
                     : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
@@ -92,21 +92,21 @@ export default function InvoicesPage() {
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
-            <form onSubmit={handleSearchSubmit} className="relative">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
+            <form onSubmit={handleSearchSubmit} className="relative flex-1 sm:flex-none">
               <input
                 type="text"
                 placeholder="Cari nomor / klien..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48 sm:w-64 pl-8 pr-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
+                className="w-full sm:w-64 pl-8 pr-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
               />
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
             </form>
 
             <Link
               href="/invoices/new"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-semibold hover:bg-sky-700 shadow-xs shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-semibold hover:bg-sky-700 shadow-xs shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Buat Faktur Baru</span>

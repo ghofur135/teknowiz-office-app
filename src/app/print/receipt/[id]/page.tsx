@@ -111,13 +111,14 @@ export default function PrintReceiptPage() {
       </div>
 
       {/* Sheet Container */}
-      <div
-        className={`print-page w-full mx-auto bg-white sm:shadow-lg sm:border sm:border-slate-300 leading-normal flex flex-col justify-between print:shadow-none print:border-none transition-all ${
-          isA5
-            ? 'max-w-[210mm] min-h-[142mm] max-h-[148mm] p-[5mm_8mm] text-[10.5px]'
-            : 'max-w-[210mm] min-h-[200mm] p-[12mm_15mm] text-xs'
-        }`}
-      >
+      <div className="overflow-x-auto w-full px-2 sm:px-4 pb-10 flex justify-center print:p-0 print:m-0 print:overflow-visible">
+        <div
+          className={`print-page shrink-0 bg-white sm:shadow-lg sm:border sm:border-slate-300 leading-normal flex flex-col justify-between print:shadow-none print:border-none transition-all ${
+            isA5
+              ? 'w-[210mm] max-w-[210mm] min-h-[142mm] max-h-[148mm] p-[5mm_8mm] text-[10.5px]'
+              : 'w-[210mm] max-w-[210mm] min-h-[200mm] p-[12mm_15mm] text-xs'
+          }`}
+        >
         {/* Receipt Border Container (Classic Corporate Border) */}
         <div className={`border-2 border-slate-900 flex flex-col justify-between h-full relative ${
           isA5 ? 'p-3.5' : 'p-6'
@@ -297,5 +298,6 @@ export default function PrintReceiptPage() {
         </div>
       </div>
     </div>
+  </div>
   );
 }

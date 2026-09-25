@@ -114,13 +114,14 @@ export default function PrintInvoicePage() {
       </div>
 
       {/* Sheet Container */}
-      <div
-        className={`print-page w-full mx-auto bg-white sm:shadow-lg sm:border sm:border-slate-300 leading-normal flex flex-col justify-between print:shadow-none print:border-none transition-all ${
-          isA5
-            ? 'max-w-[210mm] min-h-[142mm] p-[5mm_8mm] text-[9.5px]'
-            : 'max-w-[210mm] min-h-[297mm] p-[10mm_12mm] text-[11px]'
-        }`}
-      >
+      <div className="overflow-x-auto w-full px-2 sm:px-4 pb-10 flex justify-center print:p-0 print:m-0 print:overflow-visible">
+        <div
+          className={`print-page shrink-0 bg-white sm:shadow-lg sm:border sm:border-slate-300 leading-normal flex flex-col justify-between print:shadow-none print:border-none transition-all ${
+            isA5
+              ? 'w-[210mm] max-w-[210mm] min-h-[142mm] p-[5mm_8mm] text-[9.5px]'
+              : 'w-[210mm] max-w-[210mm] min-h-[297mm] p-[10mm_12mm] text-[11px]'
+          }`}
+        >
         <div>
           {/* Header Bar */}
           <div className={`flex justify-between items-start border-b-2 border-slate-900 ${
@@ -409,5 +410,6 @@ export default function PrintInvoicePage() {
         </div>
       </div>
     </div>
+  </div>
   );
 }

@@ -84,7 +84,7 @@ export default function InvoiceDetailPage() {
         subtitle={`Diterbitkan untuk ${document.client_name}`}
       />
 
-      <main className="p-6 md:p-8 space-y-6 flex-1 overflow-y-auto max-w-6xl mx-auto w-full">
+      <main className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 flex-1 overflow-y-auto max-w-6xl mx-auto w-full">
         {/* Top Action Bar */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
           <div className="flex items-center gap-3">
@@ -210,41 +210,43 @@ export default function InvoiceDetailPage() {
               Rincian Barang & Layanan
             </h2>
           </div>
-          <table className="table-corporate text-xs">
-            <thead>
-              <tr>
-                <th className="w-10 text-center">#</th>
-                <th>Deskripsi Item</th>
-                <th className="text-center w-20">Qty</th>
-                <th className="text-center w-24">Satuan</th>
-                <th className="text-right w-32">Harga Satuan</th>
-                <th className="text-right w-28">Diskon</th>
-                <th className="text-right w-36">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {document.items?.map((item: any, idx: number) => (
-                <tr key={item.id || idx}>
-                  <td className="text-center text-slate-400 font-semibold">{idx + 1}</td>
-                  <td>
-                    <div className="font-semibold text-slate-900">{item.item_name}</div>
-                    {item.description && (
-                      <div className="text-[11px] text-slate-500 mt-0.5">{item.description}</div>
-                    )}
-                  </td>
-                  <td className="text-center font-mono">{item.quantity}</td>
-                  <td className="text-center text-slate-600">{item.unit}</td>
-                  <td className="text-right font-mono">{formatRupiah(item.unit_price)}</td>
-                  <td className="text-right font-mono text-slate-500">
-                    {item.discount_amount > 0 ? formatRupiah(item.discount_amount) : '-'}
-                  </td>
-                  <td className="text-right font-bold text-slate-900 font-mono">
-                    {formatRupiah(item.total_price)}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="table-corporate text-xs min-w-[640px]">
+              <thead>
+                <tr>
+                  <th className="w-10 text-center">#</th>
+                  <th>Deskripsi Item</th>
+                  <th className="text-center w-20">Qty</th>
+                  <th className="text-center w-24">Satuan</th>
+                  <th className="text-right w-32">Harga Satuan</th>
+                  <th className="text-right w-28">Diskon</th>
+                  <th className="text-right w-36">Total</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {document.items?.map((item: any, idx: number) => (
+                  <tr key={item.id || idx}>
+                    <td className="text-center text-slate-400 font-semibold">{idx + 1}</td>
+                    <td>
+                      <div className="font-semibold text-slate-900">{item.item_name}</div>
+                      {item.description && (
+                        <div className="text-[11px] text-slate-500 mt-0.5">{item.description}</div>
+                      )}
+                    </td>
+                    <td className="text-center font-mono">{item.quantity}</td>
+                    <td className="text-center text-slate-600">{item.unit}</td>
+                    <td className="text-right font-mono">{formatRupiah(item.unit_price)}</td>
+                    <td className="text-right font-mono text-slate-500">
+                      {item.discount_amount > 0 ? formatRupiah(item.discount_amount) : '-'}
+                    </td>
+                    <td className="text-right font-bold text-slate-900 font-mono">
+                      {formatRupiah(item.total_price)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {/* Footer Kalkulasi */}
           <div className="p-6 bg-slate-50/70 border-t border-slate-200 flex flex-col md:flex-row justify-between items-start gap-6">

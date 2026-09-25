@@ -108,7 +108,7 @@ export default function SettingsPage() {
         subtitle="Data yang dimasukkan di sini akan otomatis tercetak di header & footer dokumen resmi"
       />
 
-      <main className="p-6 md:p-8 space-y-6 flex-1 overflow-y-auto max-w-4xl mx-auto w-full">
+      <main className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 flex-1 overflow-y-auto max-w-4xl mx-auto w-full">
         {successMsg && (
           <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-emerald-600" />
@@ -668,7 +668,7 @@ export default function SettingsPage() {
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-sky-600 text-white font-semibold text-xs hover:bg-sky-700 shadow-xs disabled:opacity-50"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-sky-600 text-white font-semibold text-xs hover:bg-sky-700 shadow-xs disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               <span>{saving ? 'Menyimpan...' : 'Simpan Semua Pengaturan'}</span>

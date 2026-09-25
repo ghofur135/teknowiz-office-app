@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useSidebar } from '@/context/SidebarContext';
 import {
   LayoutDashboard,
   FileText,
@@ -14,7 +15,7 @@ import {
   ShieldCheck,
   Building2,
   LogOut,
-  UserCheck
+  X
 } from 'lucide-react';
 
 const navigation = [
@@ -28,7 +29,13 @@ const navigation = [
   { name: 'Pengaturan PT', href: '/settings', icon: Settings },
 ];
 
-export function Sidebar() {
+interface SidebarContentProps {
+  isMobile?: boolean;
+  onClose?: () => void;
+  onLinkClick?: () => void;
+}
+
+function SidebarContent({ isMobile = false, onClose, onLinkClick }: SidebarContentProps) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -45,25 +52,40 @@ export function Sidebar() {
   };
 
   return (
-    <aside suppressHydrationWarning className="no-print w-64 bg-slate-900 border-r border-slate-800 text-slate-300 flex flex-col shrink-0 h-screen sticky top-0 select-none">
+    <div className="flex flex-col h-full">
       {/* Brand Header */}
       <div className="p-5 border-b border-slate-800 bg-slate-950/40">
-        <div className="flex items-center gap-3">
-          <img
-            src="/images/logo.png"
-            alt="Logo TeknoWiz"
-            onError={(e) => {
-              (e.target as HTMLElement).style.display = 'none';
-            }}
-            className="w-10 h-10 object-contain rounded-lg shrink-0 bg-white/10 p-1 border border-slate-700/60"
-          />
-          <div>
-            <h1 className="text-white font-bold text-base leading-tight tracking-tight">
-              TeknoWiz
-            </h1>
-            <p className="text-xs text-sky-400 font-medium">Billing & Invoicing</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src="/images/logo.png"
+              alt="Logo TeknoWiz"
+              onError={(e) => {
+                (e.target as HTMLElement).style.display = 'none';
+              }}
+              className="w-10 h-10 object-contain rounded-lg shrink-0 bg-white/10 p-1 border border-slate-700/60"
+            />
+            <div>
+              <h1 className="text-white font-bold text-base leading-tight tracking-tight">
+                TeknoWiz
+              </h1>
+              <p className="text-xs text-sky-400 font-medium">Billing & Invoicing</p>
+            </div>
           </div>
+
+          {/* Close button on mobile */}
+          {isMobile && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              aria-label="Tutup navigasi"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
         </div>
+
         <div className="mt-3 inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60 text-[11px] text-slate-300">
           <Building2 className="w-3 h-3 text-sky-400" />
           <span>PT Tekno Wiz Indonesia</span>
@@ -82,6 +104,7 @@ export function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
+              onClick={onLinkClick}
               className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive
                   ? 'bg-sky-600 text-white shadow-sm'
@@ -113,7 +136,7 @@ export function Sidebar() {
           </div>
           <button
             onClick={handleLogout}
-            className="p-1.5 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-700"
+            className="p-1.5 rounded text-slate-400 hover:text-rose-400 hover:bg-slate-700 transition-colors"
             title="Keluar / Logout"
           >
             <LogOut className="w-4 h-4" />
@@ -125,6 +148,42 @@ export function Sidebar() {
           <span className="text-sky-400 font-mono">v1.0.0</span>
         </div>
       </div>
-    </aside>
+    </div>
+  );
+}
+
+export function Sidebar() {
+  const { isOpen, close } = useSidebar();
+
+  return (
+    <>
+      {/* 1. Desktop Static Sidebar (Visible on md and larger) */}
+      <aside
+        suppressHydrationWarning
+        className="no-print hidden md:flex w-64 bg-slate-900 border-r border-slate-800 text-slate-300 flex-col shrink-0 h-screen sticky top-0 select-none"
+      >
+        <SidebarContent />
+      </aside>
+
+      {/* 2. Mobile Backdrop Overlay (Visible on < md when drawer is open) */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-40 md:hidden transition-opacity"
+          onClick={close}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* 3. Mobile Slide-over Drawer (Visible on < md) */}
+      <aside
+        suppressHydrationWarning
+        aria-hidden={!isOpen}
+        className={`no-print fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 border-r border-slate-800 text-slate-300 flex flex-col shadow-2xl transition-transform duration-300 ease-in-out md:hidden select-none ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <SidebarContent isMobile onClose={close} onLinkClick={close} />
+      </aside>
+    </>
   );
 }

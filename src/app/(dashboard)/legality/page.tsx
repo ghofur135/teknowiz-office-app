@@ -199,19 +199,22 @@ export default function LegalityPage() {
   const compliancePercentage = Math.round((uploadedCoreCount / coreLegalDocs.length) * 100);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col antialiased">
-      <Navbar />
+    <div className="flex-1 flex flex-col antialiased">
+      <Navbar
+        title="Arsip Dokumen Legalitas PT"
+        subtitle="Pusat kepatuhan hukum notaris, NIB, NPWP, dan sertifikasi badan usaha"
+      />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-5 sm:space-y-6">
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-xs">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="p-2 rounded-xl bg-sky-100 text-sky-700">
                 <ShieldCheck className="w-6 h-6" />
               </span>
               <div>
-                <h1 className="text-xl font-black text-slate-900 tracking-tight">
+                <h1 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
                   Arsip Dokumen Legalitas Perusahaan
                 </h1>
                 <p className="text-xs text-slate-500 font-medium">
@@ -221,13 +224,13 @@ export default function LegalityPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               onClick={() => {
                 setShowUploadModal(true);
                 setUploadError('');
               }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Upload Dokumen Legalitas</span>
@@ -325,7 +328,7 @@ export default function LegalityPage() {
           </div>
 
           {/* Category Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs select-none">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs select-none -mx-4 px-4 sm:mx-0 sm:px-0">
             <button
               onClick={() => setSelectedCategory('ALL')}
               className={`px-3.5 py-1.5 rounded-lg font-bold shrink-0 transition-all ${

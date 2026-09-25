@@ -279,22 +279,22 @@ export function DocumentForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-8 max-w-6xl mx-auto">
+    <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 max-w-6xl mx-auto">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 border-b border-slate-200 pb-4 sm:pb-5">
         <div className="flex items-center gap-3">
           <Link
             href={documentType === 'INVOICE' ? '/invoices' : '/quotations'}
-            className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100"
+            className="p-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-900 truncate">
               {isEdit ? 'Edit' : 'Buat Baru'}{' '}
               {documentType === 'INVOICE' ? 'Faktur Tagihan' : 'Surat Penawaran'}
             </h1>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 truncate">
               {isEdit
                 ? initialData?.document_number
                 : `Nomor resmi ${documentType === 'INVOICE' ? 'INV' : 'QUO'}/TW/... akan di-generate otomatis`}
@@ -302,11 +302,11 @@ export function DocumentForm({
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <button
             type="submit"
             disabled={submitting}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-sky-600 text-white font-semibold text-xs hover:bg-sky-700 shadow-sm disabled:opacity-50"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:py-2 rounded-lg bg-sky-600 text-white font-semibold text-xs hover:bg-sky-700 shadow-sm disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             <span>{submitting ? 'Menyimpan...' : 'Simpan Dokumen'}</span>
@@ -315,7 +315,7 @@ export function DocumentForm({
       </div>
 
       {/* Section 1: Detail Pihak & Dokumen */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-xs">
         {/* Klien */}
         <div className="space-y-2">
           <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
@@ -461,7 +461,7 @@ export function DocumentForm({
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-xs text-left">
+          <table className="w-full text-xs text-left min-w-[760px]">
             <thead className="bg-slate-100 text-slate-800 font-semibold border-b border-slate-200">
               <tr>
                 <th className="p-3 w-10 text-center">#</th>
@@ -571,9 +571,9 @@ export function DocumentForm({
       </div>
 
       {/* Section 3: Ringkasan Kalkulasi & Footer Detail */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 items-start">
         {/* Kolom Kiri: Catatan & Instruksi Rekening */}
-        <div className="space-y-4 bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
+        <div className="space-y-4 bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-xs">
           <div className="space-y-2">
             <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
               Instruksi Rekening & Pembayaran
@@ -614,7 +614,7 @@ export function DocumentForm({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-2">
             <div className="space-y-1">
               <label className="text-[11px] font-bold text-slate-600 uppercase">
                 Nama Penandatangan
@@ -641,7 +641,7 @@ export function DocumentForm({
         </div>
 
         {/* Kolom Kanan: Rekapitulasi Finansial */}
-        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-4">
+        <div className="bg-white p-4 sm:p-6 rounded-xl border border-slate-200 shadow-xs space-y-4">
           <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-3">
             Rekapitulasi Finansial
           </h2>
@@ -656,7 +656,7 @@ export function DocumentForm({
             </div>
 
             {/* Diskon Global */}
-            <div className="flex items-center justify-between gap-3 py-1 border-t border-slate-100 pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 py-1 border-t border-slate-100 pt-2">
               <div className="flex items-center gap-2">
                 <span className="text-slate-600 font-medium">Diskon Tambahan:</span>
                 <select
@@ -668,7 +668,7 @@ export function DocumentForm({
                   <option value="PERCENT">Persen (%)</option>
                 </select>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-between sm:justify-end gap-2">
                 <input
                   type="number"
                   min="0"
@@ -676,7 +676,7 @@ export function DocumentForm({
                   onChange={(e) => setDiscountValue(Number(e.target.value))}
                   className="w-24 text-right p-1 text-xs rounded border border-slate-300 font-mono"
                 />
-                <span className="text-slate-700 font-mono">
+                <span className="text-slate-700 font-mono font-medium">
                   - {formatRupiah(financials.discount_amount)}
                 </span>
               </div>
@@ -690,7 +690,7 @@ export function DocumentForm({
 
             {/* PPN */}
             <div className="space-y-1 border-t border-slate-100 pt-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
                 <div className="flex items-center gap-2">
                   <span className="text-slate-600 font-medium">PPN:</span>
                   <select
@@ -703,7 +703,7 @@ export function DocumentForm({
                     <option value="12">12% (PPN 12% PKP)</option>
                   </select>
                 </div>
-                <span className="font-mono text-slate-900 font-semibold">
+                <span className="font-mono text-slate-900 font-semibold text-right">
                   + {formatRupiah(financials.tax_amount)}
                 </span>
               </div>
@@ -716,7 +716,7 @@ export function DocumentForm({
 
             {/* Pemotongan Pajak Lawan Transaksi (Withholding Tax) */}
             <div className="space-y-1 border-t border-slate-100 pt-2">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
                 <div className="flex items-center gap-2">
                   <span className="text-slate-600 font-medium">Potongan Pajak Lawan:</span>
                   <select
@@ -729,7 +729,7 @@ export function DocumentForm({
                     <option value="2">2% (PPh 23 Jasa TI - Tanpa Suket PP 55)</option>
                   </select>
                 </div>
-                <span className="font-mono text-slate-900 font-semibold">
+                <span className="font-mono text-slate-900 font-semibold text-right">
                   - {formatRupiah(financials.withholding_tax_amount)}
                 </span>
               </div>

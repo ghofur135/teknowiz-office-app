@@ -81,10 +81,10 @@ export function PaymentModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4">
+      <div className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in duration-200 max-h-[92vh] flex flex-col">
         {/* Modal Header */}
-        <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+        <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50 shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-lg bg-sky-100 text-sky-700">
               <CreditCard className="w-5 h-5" />
@@ -148,11 +148,11 @@ export function PaymentModal({
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 pt-2">
               <Link
                 href={`/print/receipt/${receiptResult.id}`}
                 target="_blank"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-600 text-white font-semibold text-xs hover:bg-sky-700 shadow-xs"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg bg-sky-600 text-white font-semibold text-xs hover:bg-sky-700 shadow-xs"
               >
                 <Printer className="w-4 h-4" />
                 <span>Cetak Kwitansi Resmi (A4)</span>
@@ -160,7 +160,7 @@ export function PaymentModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 rounded-lg border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100"
+                className="w-full sm:w-auto px-4 py-2.5 sm:py-2 rounded-lg border border-slate-300 text-slate-700 text-xs font-semibold hover:bg-slate-100"
               >
                 Tutup
               </button>
@@ -168,7 +168,7 @@ export function PaymentModal({
           </div>
         ) : (
           /* Payment Form */
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 overflow-y-auto">
             <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs flex justify-between items-center">
               <div>
                 <span className="text-slate-500">Total Tagihan:</span>{' '}
@@ -180,7 +180,7 @@ export function PaymentModal({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-slate-700 uppercase">
                   Tanggal Bayar *
@@ -243,7 +243,7 @@ export function PaymentModal({
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1">
                 <label className="text-[11px] font-bold text-slate-700 uppercase">
                   No. Bukti / Referensi Bank

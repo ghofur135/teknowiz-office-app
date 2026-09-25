@@ -177,14 +177,14 @@ export default function ProductsPage() {
         subtitle="Daftar paket resmi TeknoWiz (PulseTV, Wizly, InfraMate, Jasa Konsultasi)"
       />
 
-      <main className="p-6 md:p-8 space-y-6 flex-1 overflow-y-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-2">
+      <main className="p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 flex-1 overflow-y-auto">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 border-b lg:border-b-0 border-slate-200 -mx-4 px-4 sm:mx-0 sm:px-0">
             {['ALL', 'SAAS', 'IT_SERVICE', 'LICENSE'].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategoryFilter(cat)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors shrink-0 ${
                   categoryFilter === cat
                     ? 'bg-sky-600 text-white shadow-xs'
                     : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
@@ -195,21 +195,21 @@ export default function ProductsPage() {
             ))}
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="relative">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3">
+            <div className="relative flex-1 sm:flex-none">
               <input
                 type="text"
                 placeholder="Cari produk / kode..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-56 sm:w-64 pl-8 pr-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-1 focus:ring-sky-500"
+                className="w-full sm:w-64 pl-8 pr-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-1 focus:ring-sky-500"
               />
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
             </div>
 
             <button
               onClick={openAddModal}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-semibold hover:bg-sky-700 shadow-xs shrink-0"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-sky-600 text-white text-xs font-semibold hover:bg-sky-700 shadow-xs shrink-0"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Tambah Produk</span>
@@ -320,7 +320,7 @@ export default function ProductsPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
                   <label className="font-bold text-slate-700 uppercase">
                     Kode Produk *
@@ -333,7 +333,7 @@ export default function ProductsPage() {
                     className="w-full p-2 rounded-lg border border-slate-300 font-mono font-semibold"
                   />
                 </div>
-                <div className="col-span-2 space-y-1">
+                <div className="sm:col-span-2 space-y-1">
                   <label className="font-bold text-slate-700 uppercase">
                     Kategori
                   </label>
@@ -364,7 +364,7 @@ export default function ProductsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="font-bold text-slate-700 uppercase">
                     Tarif Standar (Rp) *

@@ -59,7 +59,7 @@ export default function DashboardPage() {
         subtitle="Pusat kontrol operasional faktur, penawaran harga, dan penerimaan kas"
       />
 
-      <main className="p-6 md:p-8 space-y-8 flex-1 overflow-y-auto">
+      <main className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-8 flex-1 overflow-y-auto">
         {/* KPI Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* Card 1: Omzet */}

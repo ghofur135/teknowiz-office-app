@@ -6,6 +6,30 @@ Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.co
 
 ---
 
+## [1.10.0] - 2026-09-25
+
+### 📱 Desain & Tata Letak: Full Mobile Responsiveness (Tampilan HP & Tablet)
+- **Sistem Navigasi Mobile Drawer & Hamburger Menu (`SidebarContext`, `Sidebar.tsx`, `Navbar.tsx`)**:
+  - Implementasi *Off-Canvas Navigation Drawer* untuk layar smartphone/tablet (`< 768px`). Sidebar tidak lagi menekan lebar halaman, melainkan tersembunyi secara default dan dapat dibuka via tombol Hamburger di pojok kiri atas Navbar.
+  - Ditambahkan *Backdrop Overlay* gelap (`bg-slate-950/70 backdrop-blur-xs`) dengan transisi halus saat drawer terbuka.
+  - Otomatis menutup drawer saat pengguna memilih menu atau saat rute URL berpindah (`pathname change`), serta saat menekan tombol `X`, klik di luar area drawer, atau menekan tombol `Esc`.
+  - Body scroll locking (`overflow: hidden`) saat drawer aktif untuk mencegah scroll ganda pada layar sentuh.
+- **Navbar Adaptif & Tombol Aksi Cepat**:
+  - Tombol aksi *"Buat Faktur"* dan *"Buat Penawaran"* otomatis menyesuaikan ukuran pada layar kecil (`Faktur` / `Penawaran` di mobile, teks penuh di desktop).
+  - Judul halaman dan subjudul tertata rapi tanpa menyebabkan pemotongan atau *wrapping* tata letak yang berantakan.
+- **Tabel Dokumen & Detail yang Nyaman di Layar HP (`overflow-x-auto`)**:
+  - Seluruh tabel rincian transaksi (`/invoices`, `/quotations`, `/receipts`, serta detail item `/invoices/[id]` dan `/quotations/[id]`) dilengkapi pembungkus *horizontal scroll* (`overflow-x-auto`).
+  - Menetapkan batas lebar minimum (`min-w-[640px]` s.d. `min-w-[760px]`) sehingga kolom rincian barang/layanan, harga satuan, dan diskon tidak terjepit saat dilihat dari HP.
+- **Formulir Transaksi & Ringkasan Finansial Responsif (`DocumentForm.tsx`)**:
+  - Penyesuaian padding formulir (`p-4 sm:p-6 md:p-8`) dan tombol simpan *full-width* pada layar ponsel.
+  - Grid kalkulasi finansial (Diskon Tambahan, PPN, Potongan Pajak Lawan) otomatis berpindah ke format vertikal pada layar sempit sehingga angka dan pilihan tarif tidak bertumpuk.
+- **Modal Dialog Sentuh-Ramah (*Touch-Friendly*)**:
+  - Modal tambah/edit klien (`/clients`), modal katalog produk (`/products`), dan modal pencatatan pembayaran (`PaymentModal.tsx`) diperbarui dengan grid fleksibel (`grid-cols-1 sm:grid-cols-2`), batas tinggi maksimal (`max-h-[92vh]`), dan area formulir yang dapat digulir (*scrollable*).
+- **Pratinjau Dokumen Cetak di Ponsel (`/print/...`)**:
+  - Kertas cetak A4 dan A5 Landscape dibungkus dalam kontainer *responsive swipeable viewer* sehingga pengguna smartphone dapat menginspeksi lembar faktur atau kwitansi secara leluasa tanpa merusak lebar halaman web.
+
+---
+
 ## [1.9.0] - 2026-09-25
 
 ### 📄 Fitur Baru: Dukungan Format Cetak A5 Landscape & A4 Portrait
