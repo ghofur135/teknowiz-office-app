@@ -6,6 +6,21 @@ Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.co
 
 ---
 
+## [1.9.0] - 2026-09-25
+
+### 📄 Fitur Baru: Dukungan Format Cetak A5 Landscape & A4 Portrait
+- **Standar Baru Kwitansi Pembayaran (`/print/receipt/[id]`)**:
+  - Format default kwitansi kini menggunakan **A5 Landscape ($210\text{ mm} \times 148\text{ mm}$)** yang merupakan standar resmi buku kwitansi korporat di Indonesia.
+  - Layout proporsional dan padat dengan border formal ganda, kotak nominal terbilang, stempel basah, QR code verifikasi, serta kolom tanda tangan dan meterai tempel tanpa menyisakan ruang kosong vertikal berlebih.
+  - Injeksi otomatis CSS `@page { size: A5 landscape; }` sehingga dialog cetak browser (Ctrl + P) langsung memilih kertas A5 Landscape secara presisi.
+- **Toggle Pemilihan Ukuran Kertas pada Dokumen Cetak (`Invoice`, `Quotation`, `Receipt`)**:
+  - Tombol beralih fleksibel antara:
+    - **📑 A5 Landscape**: Format ringkas setengah kertas A4 horisontal (hemat 50% kertas, cocok untuk tagihan 1-4 item dan kwitansi).
+    - **📄 A4 Portrait**: Format selembar penuh vertikal standar korporat (cocok untuk tagihan dengan banyak rincian item).
+  - Tampilan layar dan layout tabel menyesuaikan secara realtime sesuai ukuran kertas yang dipilih.
+
+---
+
 ## [1.8.0] - 2026-09-25
 
 ### ⚖️ Kepatuhan Pajak & Ketentuan Transaksi PT Perorangan (UU Cipta Kerja, PP 55/2022 & PP 20/2026)
