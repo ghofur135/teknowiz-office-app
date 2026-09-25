@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Lock,
@@ -11,16 +11,23 @@ import {
   AlertCircle,
   Building2,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  RefreshCw
 } from 'lucide-react';
 import { APP_VERSION } from '@/lib/version';
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectPath = searchParams.get('redirect') || '/';
+  
+  // Sanitasi Parameter Redirect (Anti Open-Redirect Vulnerability)
+  const rawRedirect = searchParams.get('redirect') || '/';
+  const redirectPath =
+    rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') && !rawRedirect.includes('\\')
+      ? rawRedirect
+      : '/';
 
-  // Form bersih tanpa autofill
+  // Form states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -32,6 +39,22 @@ function LoginForm() {
   const [bannerSrc, setBannerSrc] = useState('/images/login-banner.png');
   const [logoError, setLogoError] = useState(false);
 
+  // Progressive CAPTCHA states
+  const [failedCount, setFailedCount] = useState(0);
+  const [captchaNum1, setCaptchaNum1] = useState(0);
+  const [captchaNum2, setCaptchaNum2] = useState(0);
+  const [captchaInput, setCaptchaInput] = useState('');
+
+  const generateCaptcha = () => {
+    setCaptchaNum1(Math.floor(Math.random() * 8) + 1);
+    setCaptchaNum2(Math.floor(Math.random() * 8) + 1);
+    setCaptchaInput('');
+  };
+
+  useEffect(() => {
+    generateCaptcha();
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
@@ -39,6 +62,16 @@ function LoginForm() {
     if (!email.trim() || !password) {
       setErrorMsg('Silakan masukkan email dan kata sandi Anda.');
       return;
+    }
+
+    // Validasi CAPTCHA jika percobaan gagal >= 2 kali
+    if (failedCount >= 2) {
+      const expected = captchaNum1 + captchaNum2;
+      if (parseInt(captchaInput, 10) !== expected) {
+        setErrorMsg('Jawaban verifikasi keamanan (CAPTCHA) salah. Silakan coba lagi.');
+        generateCaptcha();
+        return;
+      }
     }
 
     try {
@@ -52,6 +85,8 @@ function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
+        setFailedCount((prev) => prev + 1);
+        generateCaptcha();
         throw new Error(data.error || 'Email atau kata sandi yang Anda masukkan salah.');
       }
 
@@ -68,7 +103,7 @@ function LoginForm() {
     <div className="min-h-screen w-full flex flex-col md:flex-row bg-white text-slate-800">
       {/* SISI KIRI: Visual Showcase dengan login-banner.png */}
       <div className="relative w-full md:w-5/12 lg:w-1/2 bg-slate-950 text-white flex flex-col justify-between p-8 sm:p-12 overflow-hidden border-r border-slate-800">
-        {/* Banner Image dari user */}
+        {/* Banner Image */}
         {bannerSrc && (
           <img
             src={bannerSrc}
@@ -84,7 +119,7 @@ function LoginForm() {
           />
         )}
 
-        {/* Elegant Gradient Overlay untuk keterbacaan teks */}
+        {/* Elegant Gradient Overlay */}
         <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/75 to-slate-900/60 pointer-events-none" />
 
         {/* Top Header Sisi Kiri: Logo Resmi PT Tekno Wiz */}
@@ -143,7 +178,7 @@ function LoginForm() {
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0" />
-              <span>Kalkulasi Pajak PPN & PPh 23</span>
+              <span>Pajak Non-PKP PP 55/2022</span>
             </div>
           </div>
         </div>
@@ -158,28 +193,17 @@ function LoginForm() {
         </div>
       </div>
 
-      {/* SISI KANAN: Form Login Standar Profesional */}
+      {/* SISI KANAN: Form Login */}
       <div className="w-full md:w-7/12 lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 bg-white">
         <div className="w-full max-w-md space-y-8">
-          {/* Logo & Header Form */}
+          {/* Header Form */}
           <div className="space-y-3">
-            <div className="flex items-center gap-3">
-              <img
-                src="/images/logo.png"
-                alt="Logo TeknoWiz"
-                onError={(e) => {
-                  (e.target as HTMLElement).style.display = 'none';
-                }}
-                className="h-10 w-auto max-w-[140px] object-contain"
-              />
-            </div>
-
             <div className="space-y-1">
               <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
                 Masuk ke Akun Anda
               </h2>
               <p className="text-xs sm:text-sm text-slate-500">
-                Silakan masukkan email dan kata sandi Anda untuk mengakses WizBilling.
+                Silakan masukkan kredensial resmi untuk mengakses WizBilling.
               </p>
             </div>
           </div>
@@ -195,9 +219,9 @@ function LoginForm() {
             </div>
           )}
 
-          {/* Form Standar Tanpa Autofill */}
+          {/* Form Login */}
           <form onSubmit={handleLogin} className="space-y-5">
-            {/* Input Email / Username */}
+            {/* Input Email */}
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide">
                 Email / Username
@@ -259,6 +283,39 @@ function LoginForm() {
                 </button>
               </div>
             </div>
+
+            {/* Progressive Math CAPTCHA (Tampil saat gagal >= 2 kali) */}
+            {failedCount >= 2 && (
+              <div className="p-3.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 space-y-2 animate-in fade-in duration-200">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+                    Verifikasi Keamanan (Anti-Bot)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={generateCaptcha}
+                    className="text-[11px] text-amber-700 hover:underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <RefreshCw className="w-3 h-3" />
+                    Acak Soal
+                  </button>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="px-3 py-2 bg-white rounded border border-amber-300 font-mono font-bold text-sm tracking-wider text-slate-800 select-none">
+                    {captchaNum1} + {captchaNum2} = ?
+                  </div>
+                  <input
+                    type="number"
+                    required
+                    placeholder="Jawaban"
+                    value={captchaInput}
+                    onChange={(e) => setCaptchaInput(e.target.value)}
+                    className="flex-1 text-xs sm:text-sm px-3 py-2 rounded border border-amber-300 bg-white text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-amber-500 font-bold"
+                  />
+                </div>
+              </div>
+            )}
 
             {/* Remember Me */}
             <div className="flex items-center">

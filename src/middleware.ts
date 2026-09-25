@@ -52,8 +52,17 @@ async function verifySessionEdge(token: string | undefined): Promise<boolean> {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const host = request.headers.get('host') || '';
+  const proto = request.headers.get('x-forwarded-proto');
 
-  // 1. Lewati aset statis, gambar, berkas upload publik, dan internal Next.js
+  // 1. Enforce HTTPS: Redirect HTTP -> HTTPS secara permanen (301)
+  if (proto === 'http' && !host.startsWith('localhost') && !host.startsWith('127.0.0.1')) {
+    const httpsUrl = new URL(request.url);
+    httpsUrl.protocol = 'https:';
+    return NextResponse.redirect(httpsUrl, 301);
+  }
+
+  // 2. Lewati aset statis, gambar, berkas upload publik, dan internal Next.js
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/images') ||
@@ -66,11 +75,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2. Verifikasi keabsahan kriptografis token sesi
+  // 3. Verifikasi keabsahan kriptografis token sesi
   const token = request.cookies.get('wiz_session')?.value;
   const isAuthenticated = await verifySessionEdge(token);
 
-  // 3. Penanganan Endpoint API Privat (seperti /api/documents, /api/clients, dll)
+  // 4. Penanganan Endpoint API Privat (seperti /api/documents, /api/clients, dll)
   if (pathname.startsWith('/api')) {
     if (!isAuthenticated) {
       return NextResponse.json(
@@ -81,7 +90,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 4. Jika sedang berada di halaman login:
+  // 5. Jika sedang berada di halaman login:
   if (pathname === '/login') {
     if (isAuthenticated) {
       return NextResponse.redirect(new URL('/', request.url));
@@ -89,7 +98,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 5. Jika belum login dan mengakses halaman internal (dashboard, faktur, settings, dll):
+  // 6. Jika belum login dan mengakses halaman internal (dashboard, faktur, settings, dll):
   if (!isAuthenticated) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);

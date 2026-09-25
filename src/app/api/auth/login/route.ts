@@ -7,10 +7,12 @@ import { checkRateLimit, recordFailedAttempt, resetRateLimit } from '@/lib/rate-
 
 export async function POST(request: Request) {
   try {
-    // 1. Ekstraksi IP Client (Mendukung reverse proxy Nginx / Cloudflare / VPS)
+    // 1. Ekstraksi Client IP Aman (Prioritas cf-connecting-ip dari Cloudflare)
+    const cfConnectingIp = request.headers.get('cf-connecting-ip');
     const forwardedFor = request.headers.get('x-forwarded-for');
     const realIp = request.headers.get('x-real-ip');
-    const clientIp = forwardedFor ? forwardedFor.split(',')[0].trim() : (realIp || '127.0.0.1');
+
+    const clientIp = cfConnectingIp || (forwardedFor ? forwardedFor.split(',')[0].trim() : (realIp || '127.0.0.1'));
 
     // 2. Parsing & Validasi Input Body
     let body: any;
@@ -23,9 +25,9 @@ export async function POST(request: Request) {
       );
     }
 
-    const { email, password } = body;
+    const { email, password, captchaAnswer, captchaToken } = body;
 
-    // Validasi tipe data ketat (mencegah NoSQL/Prototype injection)
+    // Validasi tipe data ketat
     if (typeof email !== 'string' || typeof password !== 'string') {
       return NextResponse.json(
         { error: 'Email dan kata sandi harus berupa teks yang valid' },
@@ -35,7 +37,7 @@ export async function POST(request: Request) {
 
     const cleanEmail = email.trim().toLowerCase();
 
-    // Batasan panjang karakter (mencegah ReDoS / Buffer / Memory overload)
+    // Batasan panjang karakter
     if (!cleanEmail || !password) {
       return NextResponse.json(
         { error: 'Email dan kata sandi wajib diisi' },
@@ -50,16 +52,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. Pengecekan Rate Limiting (Proteksi Brute-Force & Credential Stuffing)
-    // Batas: Maksimal 5 percobaan gagal per IP/Email dalam kurun waktu 15 menit
-    const rateLimitKey = `login:${clientIp}:${cleanEmail}`;
+    // 3. Pengecekan Rate Limiting (Dual-Bucket: per-Email dan per-IP)
+    const emailLimitKey = `login:email:${cleanEmail}`;
     const ipLimitKey = `login:ip:${clientIp}`;
+    const pairLimitKey = `login:pair:${clientIp}:${cleanEmail}`;
 
-    const userCheck = checkRateLimit(rateLimitKey, 5, 15 * 60 * 1000, 15 * 60 * 1000);
-    const ipCheck = checkRateLimit(ipLimitKey, 15, 15 * 60 * 1000, 30 * 60 * 1000);
+    const emailCheck = checkRateLimit(emailLimitKey, 5, 15 * 60 * 1000, 15 * 60 * 1000);
+    const ipCheck = checkRateLimit(ipLimitKey, 10, 15 * 60 * 1000, 30 * 60 * 1000);
+    const pairCheck = checkRateLimit(pairLimitKey, 5, 15 * 60 * 1000, 15 * 60 * 1000);
 
-    if (!userCheck.allowed || !ipCheck.allowed) {
-      const waitSeconds = Math.max(userCheck.retryAfterSeconds, ipCheck.retryAfterSeconds);
+    if (!emailCheck.allowed || !ipCheck.allowed || !pairCheck.allowed) {
+      const waitSeconds = Math.max(
+        emailCheck.retryAfterSeconds,
+        ipCheck.retryAfterSeconds,
+        pairCheck.retryAfterSeconds
+      );
       const minutes = Math.ceil(waitSeconds / 60);
 
       return NextResponse.json(
@@ -80,26 +87,31 @@ export async function POST(request: Request) {
     const user = await authenticateUser(cleanEmail, password);
 
     if (!user) {
-      // Catat kegagalan untuk mengaktifkan batas rate-limit
-      const failUser = recordFailedAttempt(rateLimitKey, 5, 15 * 60 * 1000);
-      recordFailedAttempt(ipLimitKey, 15, 30 * 60 * 1000);
+      // Catat kegagalan ke semua bucket
+      const failEmail = recordFailedAttempt(emailLimitKey, 5, 15 * 60 * 1000);
+      const failIp = recordFailedAttempt(ipLimitKey, 10, 30 * 60 * 1000);
+      const failPair = recordFailedAttempt(pairLimitKey, 5, 15 * 60 * 1000);
+
+      const remaining = Math.min(failEmail.remaining, failPair.remaining);
 
       let warningMessage = 'Email atau kata sandi yang Anda masukkan salah.';
-      if (failUser.remaining > 0 && failUser.remaining <= 3) {
-        warningMessage += ` Peringatan: Sisa percobaan login Anda tinggal ${failUser.remaining} kali lagi sebelum diblokir sementara.`;
+      if (remaining > 0 && remaining <= 3) {
+        warningMessage += ` Peringatan: Sisa percobaan login Anda tinggal ${remaining} kali lagi sebelum diblokir sementara.`;
       }
 
       return NextResponse.json(
         {
           error: warningMessage,
-          remainingAttempts: failUser.remaining,
+          remainingAttempts: remaining,
         },
         { status: 401 }
       );
     }
 
-    // 5. Login Sukses: Reset Rate Limit untuk IP & User ini
-    resetRateLimit(rateLimitKey);
+    // 5. Login Sukses: Reset Rate Limit untuk akun & IP ini
+    resetRateLimit(emailLimitKey);
+    resetRateLimit(ipLimitKey);
+    resetRateLimit(pairLimitKey);
 
     // 6. Buat Token Sesi & Pasang Cookie HTTP-Only Aman
     const token = createSessionToken(user);
@@ -117,7 +129,7 @@ export async function POST(request: Request) {
 
     response.cookies.set('wiz_session', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: true,
       sameSite: 'lax',
       path: '/',
       maxAge: 7 * 24 * 60 * 60, // 7 hari
