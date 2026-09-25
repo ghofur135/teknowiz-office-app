@@ -227,81 +227,34 @@ export async function initSchema(client: Client) {
     );
   `);
 
+  // 10. Rekapitulasi & Penyetoran Pajak PPh Final UMKM 0,5% (PP 55/2022)
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS tax_settlements (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tax_year_month TEXT UNIQUE NOT NULL,
+      gross_turnover REAL NOT NULL DEFAULT 0,
+      tax_rate REAL NOT NULL DEFAULT 0.005,
+      tax_amount REAL NOT NULL DEFAULT 0,
+      kap_code TEXT NOT NULL DEFAULT '411128',
+      kjs_code TEXT NOT NULL DEFAULT '420',
+      billing_code TEXT,
+      ntpn_number TEXT,
+      bank_name TEXT,
+      payment_date DATE,
+      status TEXT NOT NULL DEFAULT 'UNPAID',
+      proof_file_path TEXT,
+      notes TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+
   // Seed default admin user
   const userCheck = await client.execute('SELECT COUNT(*) as count FROM users');
   if (Number(userCheck.rows[0].count) === 0) {
     await client.execute({
       sql: `INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)`,
       args: ['Dhimas Ghofur A. F.', 'dhimas@teknowiz.id', 'Teknowiz26#!', 'ADMIN']
-    });
-  }
-
-  // Seed default data jika tabel company_profiles masih kosong
-  const compCheck = await client.execute('SELECT COUNT(*) as count FROM company_profiles');
-  const count = Number(compCheck.rows[0].count);
-
-  if (count === 0) {
-    await client.execute({
-      sql: `INSERT INTO company_profiles (
-        company_name, brand_name, slogan, address, city, postal_code, email, phone, website,
-        npwp, nib, bank_name, bank_account_number, bank_account_holder, logo_path, stamp_signature_path
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [
-        'PT Tekno Wiz Indonesia',
-        'TeknoWiz Indonesia',
-        'Membangun Ekosistem Digital Berkelanjutan',
-        'Slawi Kulon, Kec. Slawi',
-        'Slawi, Kabupaten Tegal, Jawa Tengah',
-        '52411',
-        'halo@teknowiz.id',
-        '+62 878 1127 8630',
-        'https://teknowiz.id',
-        '31.849.201.8-501.000',
-        '0220109123456',
-        'Bank Mandiri',
-        '138-00-2299881-1',
-        'PT TEKNO WIZ INDONESIA',
-        '/images/logo.png',
-        '/images/stamp-teknowiz.png'
-      ]
-    });
-
-    // Seed default Produk SaaS & Jasa IT
-    const products = [
-      { code: 'TW-SAAS-01', name: 'PulseTV Control - Cloud Signage', category: 'SAAS', price: 450000, unit: 'Layar/Bulan', desc: 'Sistem manajemen konten digital signage terpusat multi-screen' },
-      { code: 'TW-SAAS-02', name: 'Wizly - Smart Helpdesk & Ticketing', category: 'SAAS', price: 1250000, unit: 'Bulan', desc: 'Platform automasi tiket layanan TI dan customer support omnichannel' },
-      { code: 'TW-SAAS-03', name: 'WizPortal - Enterprise Intranet & SSO', category: 'SAAS', price: 2500000, unit: 'Bulan', desc: 'Portal internal pegawai terintegrasi Single Sign-On dan arsip digital' },
-      { code: 'TW-SAAS-04', name: 'InfraMate - Server & Network Monitoring', category: 'SAAS', price: 1750000, unit: 'Bulan', desc: 'Pemantauan uptime server, bandwidth mikrotik, dan alerting WhatsApp 24/7' },
-      { code: 'TW-SAAS-05', name: 'DaganganGO - POS & Inventory Omnichannel', category: 'SAAS', price: 650000, unit: 'Outlet/Bulan', desc: 'Aplikasi kasir multi-cabang dengan sinkronisasi stok realtime' },
-      { code: 'TW-SAAS-06', name: 'TeknoPharm - Sistem Informasi Farmasi & Klinik', category: 'SAAS', price: 1850000, unit: 'Bulan', desc: 'SIM Klinik & Apotek bridging BPJS / SatuSehat' },
-      { code: 'TW-SRV-01', name: 'Jasa Konsultasi Arsitektur TI & Cloud', category: 'IT_SERVICE', price: 15000000, unit: 'Paket', desc: 'Audit infrastruktur, perancangan topologi high availability, dan security hardening' },
-      { code: 'TW-SRV-02', name: 'Jasa Implementasi & Integrasi Sistem B2G/B2B', category: 'IT_SERVICE', price: 25000000, unit: 'Paket', desc: 'Kustomisasi API, migrasi data, dan pelatihan personil teknis' },
-      { code: 'TW-SRV-03', name: 'Maintenance & Managed Service Tahunan', category: 'IT_SERVICE', price: 36000000, unit: 'Tahun', desc: 'Dukungan SLA 99.5%, patching berkala, backup off-site mingguan' }
-    ];
-
-    for (const p of products) {
-      await client.execute({
-        sql: `INSERT INTO product_services (code, name, category, description, default_price, billing_unit)
-              VALUES (?, ?, ?, ?, ?, ?)`,
-        args: [p.code, p.name, p.category, p.desc, p.price, p.unit]
-      });
-    }
-
-    // Seed default Demo Client
-    await client.execute({
-      sql: `INSERT INTO clients (client_code, name, pic_name, pic_phone, pic_email, address, client_type, tax_number, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: [
-        'CLI-2026-001',
-        'RSUD Dr. Soeselo Slawi',
-        'Bpk. Hendra Gunawan, S.Kom',
-        '+62 812 3456 7890',
-        'it.rsudsoeselo@tegalkab.go.id',
-        'Jl. Doel Satar No. 9, Slawi, Kab. Tegal',
-        'B2G',
-        '00.123.456.7-501.000',
-        'Klien pengadaan PulseTV & SIM Antrean Digital'
-      ]
     });
   }
 }

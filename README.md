@@ -56,11 +56,18 @@ Sistem telah dilengkapi dengan portal otentikasi login resmi dan proteksi route 
    * Pencatatan pembayaran parsial (DP / Termin) dan pelunasan. Sistem otomatis menghitung sisa tagihan (*balance due*) dan mengubah status faktur menjadi *PARTIAL* atau *PAID*.
    * Cetak Kwitansi Resmi A4 berbingkai formal ganda, kotak nominal rupiah, kotak meterai tempel (jika $\ge$ Rp 5.000.000), dan stempel digital.
 
-5. **Master Data Klien (Mini-CRM)**
+5. **Rekapitulasi & Kepatuhan Pajak PPh Final 0,5% (PP 55/2022)**
+   * Agregasi otomatis peredaran bruto 12 bulan dari seluruh faktur tagihan resmi non-batal.
+   * Perhitungan otomatis kewajiban PPh Final 0,5% UMKM Badan (KAP `411128` / KJS `420`).
+   * Panduan pembuatan kode billing DJP Online lengkap dengan NPWP Badan, nomor Suket PP 55, dan tombol salin parameter satu-klik.
+   * Pencatatan Nomor Transaksi Penerimaan Negara (NTPN), bank persepsi, dan tanggal setor per masa pajak.
+   * Format cetak tabel rekapitulasi tahunan sebagai lampiran resmi SPT Tahunan Badan Form 1771-IV.
+
+6. **Master Data Klien (Mini-CRM)**
    * Manajemen klien instansi B2G (Pemda, RSUD), korporasi B2B, dan UMKM.
    * Menyimpan kode klien otomatis (`CLI-YYYY-000`), nama instansi, nama & WhatsApp PIC, email, NPWP, dan alamat.
 
-6. **Katalog Produk SaaS & Jasa IT**
+7. **Katalog Produk SaaS & Jasa IT**
    * Katalog layanan bawaan TeknoWiz:
      * *PulseTV Control - Cloud Signage*
      * *Wizly - Smart Helpdesk & Ticketing*
@@ -70,7 +77,7 @@ Sistem telah dilengkapi dengan portal otentikasi login resmi dan proteksi route 
      * *TeknoPharm - SIM Farmasi & Klinik Bridging SatuSehat*
      * *Jasa Konsultasi TI, Integrasi API B2G, & Maintenance Tahunan*.
 
-7. **Pengaturan Identitas Legal & Rekening PT**
+8. **Pengaturan Identitas Legal & Rekening PT**
    * Form pengaturan profil perusahaan, domisili, email/telepon, NPWP, NIB, dan rekening perbankan penampung tagihan yang tersinkronisasi ke seluruh dokumen cetak.
 
 ---

@@ -4,12 +4,26 @@ Semua perubahan dan riwayat rilis sistem **WizBilling (TeknoWiz Invoice & Billin
 
 Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), dan proyek ini mematuhi [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.13.0] - 2026-09-25
+
+### 📊 Modul Perpajakan: Rekapitulasi & Kepatuhan Pajak PPh Final UMKM 0,5% (PP 55/2022)
+- **Menu Navigasi Baru (`/tax`) pada Sidebar**:
+  - Menambahkan menu **"Rekap Pajak PP 55"** dengan ikon `Calculator` yang terintegrasi harmonis dalam urutan alur kerja finansial (*Dashboard -> Faktur -> Penawaran -> Kwitansi -> Rekap Pajak -> Klien -> Layanan -> Legalitas -> Pengaturan*).
+- **Skema Database Kepatuhan Pajak (`src/lib/db.ts`)**:
+  - Penambahan tabel `tax_settlements` untuk mencatat peredaran bruto bulanan, kode billing DJP Online, nomor Bukti Penerimaan Negara (NTPN), bank persepsi, tanggal penyetoran, dan status pelunasan pajak.
+- **REST API Perpajakan Realtime (`src/app/api/tax/route.ts`)**:
+  - `GET /api/tax?year=YYYY`: Agregasi otomatis 12 bulan peredaran bruto dari seluruh faktur tagihan resmi non-batal, kalkulasi nilai PPh Final 0,5% (KAP 411128 / KJS 420), estimasi jatuh tempo penyetoran (tanggal 15 bulan berikutnya), dan ringkasan metrik tahunan.
+  - `POST /api/tax`: Endpoint aman pencatatan nomor NTPN, bank persepsi, tanggal setor, dan catatan tambahan per masa pajak.
+- **Antarmuka Pengguna Kepatuhan Pajak Korporat (`src/app/(dashboard)/tax/page.tsx`)**:
+  - **Kartu Metrik Utama**: Kewajiban Pajak Bulan Ini, Batas Waktu Setor, Total Omzet Bruto Tahunan, dan Total Pajak yang Sudah Disetor.
+  - **Kotak Panduan e-Billing DJP Online**: Menampilkan NPWP Badan PT Tekno Wiz Indonesia, Kode Akun Pajak `411128`, Kode Jenis Setoran `420`, dan nomor Suket PP 55 dengan tombol salin instan satu-klik dan tautan langsung ke portal DJP Online.
+  - **Tabel Rekapitulasi 12 Bulan (Januari - Desember)**: Visualisasi status kepatuhan (LUNAS, BELUM, NIHIL) per masa pajak.
+  - **Modal Interaktif Pencatatan Setoran**: Formulir modal pop-up untuk input Kode Billing dan Nomor NTPN.
+  - **Format Cetak Rekap Tahunan (Print-Ready)**: Mendukung pencetakan laporan rekapitulasi 12 bulan sebagai lampiran resmi SPT Tahunan Badan Form 1771-IV.
+
 ## [1.12.0] - 2026-09-25
 
 ### 🛡️ Security Audit Remediation & Hardening (Temuan Audit Keamanan Siber)
-- **Dokumentasi Roadmap & Skenario Pengembangan Lanjutan (`docs/SKENARIO-PENGEMBANGAN-TAHAP-LANJUTAN.md`)**:
-  - Menyusun cetak biru (*blueprint*) teknis 5 modul strategis: Modul Kepatuhan Pajak PPh Final 0,5% (PP 55/2022), Integrasi Notifikasi WhatsApp Gateway (Wizly/GOWA), Template Dokumen BAST & Watermark Dinamis, Audit Trail Log & RBAC Multi-Peran, serta Endpoint Health Check dan Bot Monitoring Telegram.
-
 - **Penegakan Protokol HTTPS Otomatis (`src/middleware.ts`)**:
   - Menambahkan pengalihan permanen (HTTP 301 *Moved Permanently*) dari trafik `http://` ke `https://` pada middleware untuk memitigasi risiko serangan *Man-In-The-Middle* (MITM) saat diakses dari jaringan publik.
 - **Implementasi Security Response Headers Komprehensif (`next.config.js`)**:
