@@ -44,13 +44,20 @@ export default function ProductsPage() {
     billing_unit: 'Bulan',
   });
   const [saving, setSaving] = useState(false);
+  const [company, setCompany] = useState<any>(null);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/products');
+      const [res, compRes] = await Promise.all([
+        fetch('/api/products'),
+        fetch('/api/company'),
+      ]);
       if (res.ok) {
         setProducts(await res.json());
+      }
+      if (compRes.ok) {
+        setCompany(await compRes.json());
       }
     } catch (err) {
       console.error(err);
@@ -499,10 +506,22 @@ export default function ProductsPage() {
                 </div>
 
                 <div className="text-[11px] text-slate-300 sm:text-right border-t sm:border-t-0 sm:border-l border-slate-800 pt-2 sm:pt-0 sm:pl-4 space-y-0.5">
-                  <p className="text-slate-400">Estimasi + PPN 11%:</p>
-                  <p className="font-mono font-bold text-sky-300">
-                    {formatRupiah(Math.round(previewProduct.default_price * 1.11))}
-                  </p>
+                  {company?.is_pkp ? (
+                    <>
+                      <p className="text-amber-400 font-semibold">Estimasi + PPN 11% (PKP):</p>
+                      <p className="font-mono font-bold text-amber-300">
+                        {formatRupiah(Math.round(previewProduct.default_price * 1.11))}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="text-emerald-400 font-semibold">Tarif Tagihan Non-PKP:</p>
+                      <p className="font-mono font-bold text-emerald-300">
+                        {formatRupiah(previewProduct.default_price)}
+                      </p>
+                      <p className="text-[10px] text-slate-400">Bebas PPN (PMK 197/2013)</p>
+                    </>
+                  )}
                 </div>
               </div>
 

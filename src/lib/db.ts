@@ -53,6 +53,10 @@ export async function initSchema(client: Client) {
       stamp_signature_path TEXT,
       qr_verification_mode TEXT DEFAULT 'offline',
       public_base_url TEXT DEFAULT 'https://billing.teknowiz.id',
+      is_pkp INTEGER DEFAULT 0,
+      tax_scheme TEXT DEFAULT 'PP55_FINAL',
+      suket_pp55_number TEXT DEFAULT '',
+      tax_footer_note TEXT DEFAULT 'PT Tekno Wiz Indonesia merupakan entitas PT Perorangan Wajib Pajak Badan Non-PKP (Memanfaatkan tarif PPh Final 0,5% sesuai PP No. 55/2022 jo. PP No. 20/2026).',
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
@@ -62,6 +66,18 @@ export async function initSchema(client: Client) {
   } catch {}
   try {
     await client.execute(`ALTER TABLE company_profiles ADD COLUMN public_base_url TEXT DEFAULT 'https://billing.teknowiz.id';`);
+  } catch {}
+  try {
+    await client.execute(`ALTER TABLE company_profiles ADD COLUMN is_pkp INTEGER DEFAULT 0;`);
+  } catch {}
+  try {
+    await client.execute(`ALTER TABLE company_profiles ADD COLUMN tax_scheme TEXT DEFAULT 'PP55_FINAL';`);
+  } catch {}
+  try {
+    await client.execute(`ALTER TABLE company_profiles ADD COLUMN suket_pp55_number TEXT DEFAULT '';`);
+  } catch {}
+  try {
+    await client.execute(`ALTER TABLE company_profiles ADD COLUMN tax_footer_note TEXT DEFAULT 'PT Tekno Wiz Indonesia merupakan entitas PT Perorangan Wajib Pajak Badan Non-PKP (Memanfaatkan tarif PPh Final 0,5% sesuai PP No. 55/2022 jo. PP No. 20/2026).';`);
   } catch {}
 
   // 2. Master Klien

@@ -91,6 +91,9 @@ export default function PrintInvoicePage() {
                 <p>{comp.address}, {comp.city}</p>
                 <p>Email: {comp.email} • WA: {comp.phone}</p>
                 <p>Website: {comp.website} • NPWP: {comp.npwp}</p>
+                <p className="font-semibold text-slate-700">
+                  Status: PT Perorangan • {comp.is_pkp ? 'Pengusaha Kena Pajak (PKP)' : 'Non-PKP (Bebas PPN UMKM)'}
+                </p>
               </div>
             </div>
 
@@ -243,6 +246,20 @@ export default function PrintInvoicePage() {
                 </p>
               </div>
 
+              {comp.tax_footer_note && (
+                <div className="p-2 rounded bg-sky-50/70 border border-sky-200 text-[9px] text-sky-950 leading-relaxed">
+                  <span className="font-bold uppercase tracking-wider block text-sky-900">
+                    Kepatuhan Pajak PT Perorangan:
+                  </span>
+                  <p>{comp.tax_footer_note}</p>
+                  {comp.suket_pp55_number && (
+                    <p className="mt-0.5 font-mono font-bold text-sky-900">
+                      No. Suket PP 55/PP 23: {comp.suket_pp55_number}
+                    </p>
+                  )}
+                </div>
+              )}
+
               {document.notes && (
                 <div className="text-[9.5px] text-slate-600 leading-tight">
                   <span className="font-bold text-slate-700 uppercase">Catatan: </span>
@@ -283,15 +300,22 @@ export default function PrintInvoicePage() {
                     <span className="font-mono">- {formatRupiah(document.discount_amount)}</span>
                   </div>
                 )}
-                {document.tax_amount > 0 && (
+                {document.tax_amount > 0 ? (
                   <div className="flex justify-between py-0.5 text-slate-600">
                     <span>PPN ({document.tax_rate}%):</span>
                     <span className="font-mono">+ {formatRupiah(document.tax_amount)}</span>
                   </div>
+                ) : (
+                  <div className="flex justify-between py-0.5 text-slate-500">
+                    <span>PPN (0% Non-PKP):</span>
+                    <span className="font-mono">Rp 0</span>
+                  </div>
                 )}
                 {document.withholding_tax_amount > 0 && (
                   <div className="flex justify-between py-0.5 text-slate-600">
-                    <span>PPh 23 ({document.withholding_tax_rate}%):</span>
+                    <span>
+                      Potongan PPh ({document.withholding_tax_rate}% {document.withholding_tax_rate === 0.5 ? 'Suket PP 55' : 'PPh 23'}):
+                    </span>
                     <span className="font-mono">- {formatRupiah(document.withholding_tax_amount)}</span>
                   </div>
                 )}

@@ -6,6 +6,40 @@ Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.co
 
 ---
 
+## [1.8.0] - 2026-09-25
+
+### ⚖️ Kepatuhan Pajak & Ketentuan Transaksi PT Perorangan (UU Cipta Kerja, PP 55/2022 & PP 20/2026)
+- **Modul Kepatuhan Pajak & Status Pengukuhan PKP (`/settings`)**:
+  - Konfigurasi status Pengusaha Kena Pajak (PKP) perorangan:
+    - **Non-PKP (Default UMKM)**: Sesuai PMK 197/PMK.03/2013 (omzet < Rp 4,8 Miliar), faktur tagihan **tidak memungut PPN (0%)** dan bebas kewajiban lapor SPT Masa PPN bulanan demi menjaga kepatuhan dari risiko penerbitan faktur pajak ilegal (Pasal 39A UU KUP).
+    - **Sudah PKP (Pengukuhan Sukarela / Omzet > Rp 4,8 M)**: Mengaktifkan pemungutan PPN resmi (11% atau 12%) yang disinkronkan dengan penerbitan Faktur Pajak e-Faktur / Coretax DJP.
+  - Skema PPh Badan PT Perorangan:
+    - Dukungan **PPh Final UMKM 0,5%** (PP 55/2022 jo. PP 20/2026) yang kini dapat dimanfaatkan **tanpa batasan waktu** bagi entitas PT Perorangan yang didirikan 1 orang.
+    - Opsi tarif umum Badan Pasal 31E UU PPh (diskon 50% = tarif efektif 11% dari Penghasilan Kena Pajak / Laba Bersih Fiskal).
+  - Manajemen **Nomor Surat Keterangan (Suket) PP 55 / PP 23**:
+    - Input nomor Suket resmi DJP yang otomatis dicantumkan di footer faktur tagihan agar rekanan pemotong B2B/B2G hanya memotong PPh Final 0,5% (bukan PPh 23 sebesar 2%).
+  - Kotak edukasi ringkas ketentuan transaksi PT Perorangan (pemisahan harta pribadi vs PT, kewajiban rekening bank korporat, dan ketentuan bahwa PT Perorangan adalah Wajib Pajak Badan sehingga fasilitas omzet Rp 500 juta bebas pajak milik Orang Pribadi tidak berlaku).
+- **Pembaruan Formulir Transaksi Dokumen (`DocumentForm.tsx`)**:
+  - Deteksi otomatis status PKP perusahaan saat membuka pembuatan faktur tagihan (`/invoices/new`) atau penawaran (`/quotations/new`).
+  - Opsi dropdown tarif PPN dengan panduan kontekstual (`0% Non-PKP`, `11% PPN Standar PKP`, `12% PPN 12% PKP`).
+  - Preset pemotongan pajak rekanan (*Withholding Tax*):
+    - `0%`: Klien ritel/UMKM tanpa pemotongan.
+    - `0,5%`: Rekanan B2B/B2G memotong PPh Final 0,5% dengan Bukti Potong atas dasar Suket PP 55.
+    - `2%`: Rekanan memotong PPh 23 standar jasa TI.
+  - Tombol aksi cepat *"Sisipkan Klausul Pajak PT"* pada kolom catatan/instruksi pembayaran dokumen.
+- **Pembaruan Template Cetak Presisi A4 (`/print/invoice/[id]` & `/print/quotation/[id]`)**:
+  - Penambahan badge status legalitas pada kop surat dokumen: `PT Perorangan • Non-PKP` / `PKP`.
+  - Rekapitulasi finansial menampilkan kejelasan status PPN (`PPN (0% Non-PKP): Rp 0` atau persentase tarif bila PKP).
+  - Rincian pemotongan PPh yang transparan (`Potongan PPh (0.5% Suket PP 55)` atau `Potongan PPh (2% PPh 23)`).
+  - Kotak *Kepatuhan Pajak PT Perorangan* pada footer cetak faktur tagihan yang memuat klausul dasar hukum PP 55/2022 jo. PP 20/2026 dan nomor Suket resmi.
+- **Dinamika Tarif Katalog Produk (`/products`)**:
+  - Modal pratinjau produk kini secara cerdas menampilkan *"Tarif Tagihan Non-PKP"* (harga bersih tanpa pungutan PPN) jika perusahaan berstatus Non-PKP, atau menampilkan estimasi PPN 11% jika telah berstatus PKP.
+- **Pembaruan Skema Database & PRD**:
+  - Penambahan kolom `is_pkp`, `tax_scheme`, `suket_pp55_number`, dan `tax_footer_note` pada tabel `company_profiles` SQLite.
+  - Pembaruan dokumen spesifikasi `PRD-TEKNOWIZ-BILLING-INVOICE.md` Bagian 2 dan Bagian 6.B.
+
+---
+
 ## [1.7.0] - 2026-09-24
 
 ### 🚀 Fitur Baru: Script Auto-Restore & Sinkronisasi VPS (`npm run restore:vps`)

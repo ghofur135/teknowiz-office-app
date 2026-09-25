@@ -86,6 +86,9 @@ export default function PrintQuotationPage() {
                 <p>{comp.address}, {comp.city}</p>
                 <p>Email: {comp.email} • WA: {comp.phone}</p>
                 <p>Website: {comp.website} • NPWP: {comp.npwp}</p>
+                <p className="font-semibold text-slate-700">
+                  Status: PT Perorangan • {comp.is_pkp ? 'Pengusaha Kena Pajak (PKP)' : 'Non-PKP (Bebas PPN UMKM)'}
+                </p>
               </div>
             </div>
 
@@ -245,10 +248,15 @@ export default function PrintQuotationPage() {
                     <span className="font-mono">- {formatRupiah(document.discount_amount)}</span>
                   </div>
                 )}
-                {document.tax_amount > 0 && (
+                {document.tax_amount > 0 ? (
                   <div className="flex justify-between py-0.5 text-slate-600">
                     <span>PPN ({document.tax_rate}%):</span>
                     <span className="font-mono">+ {formatRupiah(document.tax_amount)}</span>
+                  </div>
+                ) : (
+                  <div className="flex justify-between py-0.5 text-slate-500">
+                    <span>PPN (0% Non-PKP):</span>
+                    <span className="font-mono">Rp 0</span>
                   </div>
                 )}
                 <div className="flex justify-between py-1.5 border-t-2 border-slate-900 font-black text-xs text-slate-900">

@@ -39,6 +39,10 @@ export async function PUT(request: Request) {
         stamp_signature_path = ?,
         qr_verification_mode = ?,
         public_base_url = ?,
+        is_pkp = ?,
+        tax_scheme = ?,
+        suket_pp55_number = ?,
+        tax_footer_note = ?,
         updated_at = CURRENT_TIMESTAMP
       WHERE id = ?`,
       args: [
@@ -60,6 +64,10 @@ export async function PUT(request: Request) {
         body.stamp_signature_path || null,
         body.qr_verification_mode || 'offline',
         body.public_base_url || 'https://billing.teknowiz.id',
+        body.is_pkp ? 1 : 0,
+        body.tax_scheme || 'PP55_FINAL',
+        body.suket_pp55_number || '',
+        body.tax_footer_note || 'PT Tekno Wiz Indonesia merupakan entitas PT Perorangan Wajib Pajak Badan Non-PKP (Memanfaatkan tarif PPh Final 0,5% sesuai PP No. 55/2022 jo. PP No. 20/2026).',
         body.id || 1
       ]
     });

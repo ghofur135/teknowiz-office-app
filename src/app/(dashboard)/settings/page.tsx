@@ -17,7 +17,9 @@ import {
   QrCode,
   Wifi,
   WifiOff,
-  ExternalLink
+  ExternalLink,
+  Receipt,
+  Info
 } from 'lucide-react';
 import { DocumentQrCode } from '@/components/DocumentQrCode';
 
@@ -39,6 +41,10 @@ export default function SettingsPage() {
     bank_account_holder: 'PT TEKNO WIZ INDONESIA',
     qr_verification_mode: 'offline',
     public_base_url: 'https://billing.teknowiz.id',
+    is_pkp: 0,
+    tax_scheme: 'PP55_FINAL',
+    suket_pp55_number: '',
+    tax_footer_note: 'PT Tekno Wiz Indonesia merupakan entitas PT Perorangan Wajib Pajak Badan Non-PKP (Memanfaatkan tarif PPh Final 0,5% sesuai PP No. 55/2022 jo. PP No. 20/2026).',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -55,6 +61,10 @@ export default function SettingsPage() {
             ...json,
             qr_verification_mode: json.qr_verification_mode || 'offline',
             public_base_url: json.public_base_url || 'https://billing.teknowiz.id',
+            is_pkp: json.is_pkp ? 1 : 0,
+            tax_scheme: json.tax_scheme || 'PP55_FINAL',
+            suket_pp55_number: json.suket_pp55_number || '',
+            tax_footer_note: json.tax_footer_note || 'PT Tekno Wiz Indonesia merupakan entitas PT Perorangan Wajib Pajak Badan Non-PKP (Memanfaatkan tarif PPh Final 0,5% sesuai PP No. 55/2022 jo. PP No. 20/2026).',
           });
         }
       } catch (err) {
@@ -293,7 +303,160 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Card 3: Aset Visual Resmi (Logo & Stempel) */}
+          {/* Card 3: Kepatuhan Pajak & Status PKP (Perseroan Perorangan) */}
+          <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <Receipt className="w-5 h-5 text-indigo-600" />
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                  Kepatuhan Pajak & Status PKP (PT Perorangan)
+                </h2>
+              </div>
+              <span className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full self-start sm:self-auto ${
+                profile.is_pkp
+                  ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                  : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
+              }`}>
+                {profile.is_pkp ? '🏛️ Status: PKP (Memungut PPN)' : '🛡️ Status: Non-PKP (Bebas PPN UMKM)'}
+              </span>
+            </div>
+
+            {/* Edukasi Ringkas Regulasi Perpajakan PT Perorangan */}
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+              <div className="flex items-center gap-2 text-slate-800 font-bold">
+                <Info className="w-4 h-4 text-sky-600 shrink-0" />
+                <span>Ketentuan Pokok Transaksi & Perpajakan PT Perorangan (UU Cipta Kerja & PP 20/2026):</span>
+              </div>
+              <ul className="list-disc pl-5 space-y-1 text-slate-600 text-[11px] leading-relaxed">
+                <li>
+                  <strong>Subjek Pajak Badan:</strong> PT Perorangan berstatus Wajib Pajak Badan, bukan Orang Pribadi. 
+                  <span className="text-rose-600 font-semibold"> Tidak berlaku</span> fasilitas omzet Rp 500 juta bebas pajak (PPh 0,5% dihitung sejak rupiah pertama).
+                </li>
+                <li>
+                  <strong>PPh Final 0,5% (PP 55/2022 jo. PP 20/2026):</strong> Berdasarkan regulasi PP 20/2026, PT Perorangan berhak memanfaatkan PPh Final 0,5% <strong>tanpa batasan masa tahun</strong> selama omzet belum melebihi Rp 4,8 Miliar/tahun.
+                </li>
+                <li>
+                  <strong>Pungutan PPN:</strong> Jika berstatus <em>Non-PKP</em>, perusahaan <strong>dilarang memungut PPN</strong> (tarif 0%). Namun perusahaan berhak mengajukan pengukuhan PKP secara sukarela jika rekanan B2G/B2B mewajibkannya.
+                </li>
+                <li>
+                  <strong>Suket PP 55 / PP 23:</strong> Wajib dilampirkan pada invoice penagihan jasa agar rekanan B2B/B2G <strong>hanya memotong PPh Final 0,5%</strong>, bukan memotong PPh 23 (2%).
+                </li>
+              </ul>
+            </div>
+
+            {/* Pilihan Status PKP */}
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-800">
+                Status Pengukuhan Pengusaha Kena Pajak (PKP):
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div
+                  onClick={() => setProfile({ ...profile, is_pkp: 0 })}
+                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                    !profile.is_pkp
+                      ? 'border-emerald-600 bg-emerald-50/60 shadow-xs'
+                      : 'border-slate-200 hover:border-slate-300 bg-white'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2 rounded-lg mt-0.5 ${
+                      !profile.is_pkp ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      <ShieldCheck className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-xs text-slate-900">Non-PKP (Rekomendasi Default)</span>
+                        <span className="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-1.5 py-0.5 rounded">PMK 197/2013</span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        Omzet di bawah Rp 4,8 Miliar. Faktur tagihan <strong>tidak memungut PPN (0%)</strong>, harga lebih kompetitif bagi klien ritel/UMKM, dan tidak diwajibkan lapor SPT Masa PPN bulanan.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  onClick={() => setProfile({ ...profile, is_pkp: 1 })}
+                  className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                    profile.is_pkp
+                      ? 'border-amber-600 bg-amber-50/60 shadow-xs'
+                      : 'border-slate-200 hover:border-slate-300 bg-white'
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`p-2 rounded-lg mt-0.5 ${
+                      profile.is_pkp ? 'bg-amber-600 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      <Building2 className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-xs text-slate-900">Sudah Dikukuhkan PKP</span>
+                        <span className="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">e-Faktur Wajib</span>
+                      </div>
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        Telah mengantongi SPPKP dari KPP Pratama. Wajib memungut PPN (11% atau 12%), menerbitkan Faktur Pajak e-Faktur/Coretax, dan lapor SPT Masa PPN setiap bulan.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Skema PPh & Nomor Suket PP 55 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-1">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700">Skema PPh Badan yang Diterapkan</label>
+                <select
+                  value={profile.tax_scheme || 'PP55_FINAL'}
+                  onChange={(e) => setProfile({ ...profile, tax_scheme: e.target.value })}
+                  className="w-full p-2.5 rounded-lg border border-slate-300 bg-white font-semibold text-slate-800"
+                >
+                  <option value="PP55_FINAL">PPh Final UMKM 0,5% (PP 55/2022 jo. PP 20/2026)</option>
+                  <option value="NORMAL_31E">Tarif Normal Badan - Fasilitas Pasal 31E UU PPh (11% Laba Bersih)</option>
+                </select>
+                <p className="text-[10px] text-slate-500">
+                  {profile.tax_scheme === 'PP55_FINAL'
+                    ? 'Tarif 0,5% dari omzet bruto tanpa batasan waktu untuk PT Perorangan.'
+                    : 'Tarif 11% dari Penghasilan Kena Pajak (Laba Bersih Fiskal).'}
+                </p>
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-700">
+                  Nomor Surat Keterangan (Suket) PP 55 / PP 23
+                </label>
+                <input
+                  type="text"
+                  placeholder="Contoh: KET-12345/WPJ.10/KP.0403/2026"
+                  value={profile.suket_pp55_number || ''}
+                  onChange={(e) => setProfile({ ...profile, suket_pp55_number: e.target.value })}
+                  className="w-full p-2.5 rounded-lg border border-slate-300 font-mono text-slate-800"
+                />
+                <p className="text-[10px] text-slate-500">
+                  Nomor Suket ini akan dicetak pada footer faktur tagihan sebagai dasar pemotongan PPh 0,5% oleh rekanan B2B.
+                </p>
+              </div>
+
+              <div className="md:col-span-2 space-y-1">
+                <label className="font-bold text-slate-700">
+                  Catatan Kepatuhan Pajak (Tercetak di Footer Faktur)
+                </label>
+                <textarea
+                  rows={2}
+                  value={profile.tax_footer_note || ''}
+                  onChange={(e) => setProfile({ ...profile, tax_footer_note: e.target.value })}
+                  className="w-full p-2.5 rounded-lg border border-slate-300 text-xs text-slate-800 font-sans"
+                />
+                <p className="text-[10px] text-slate-500">
+                  Klausul resmi ini akan otomatis tampil di setiap lembar cetak faktur tagihan dan surat penawaran.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 4: Aset Visual Resmi (Logo & Stempel) */}
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-5">
             <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
               <ShieldCheck className="w-5 h-5 text-sky-600" />

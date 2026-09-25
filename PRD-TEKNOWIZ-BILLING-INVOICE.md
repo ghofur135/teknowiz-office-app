@@ -16,6 +16,12 @@ Dengan peresmian badan hukum PT, sistem ini berfungsi sebagai pusat kontrol keua
 Semua dokumen yang diterbitkan oleh sistem wajib mematuhi standar identitas resmi perusahaan:
 
 - **Nama Entitas Legal**: **PT Tekno Wiz Indonesia**
+- **Bentuk Badan Hukum**: **Perseroan Terbatas Perorangan (PT Perorangan)** untuk Usaha Mikro dan Kecil (UU Cipta Kerja jo. PP No. 8/2021)
+- **Status Perpajakan**:
+  - Klasifikasi: **Wajib Pajak Badan** (NPWP Badan terpisah dari pribadi direktur)
+  - Skema PPh Badan: **PPh Final UMKM 0,5%** (PP No. 55/2022 jo. PP No. 20/2026) tanpa batasan tahun selama omzet tahunan $\le$ Rp 4,8 Miliar. (Fasilitas omzet bebas pajak Rp 500 juta tidak berlaku untuk badan usaha).
+  - Status PPN: **Default Non-PKP (Bebas PPN / 0%)** sesuai PMK 197/2013, dengan opsi pengukuhan PKP sukarela (*voluntary*) jika dipersyaratkan oleh instansi klien.
+  - Mekanisme B2B / B2G: Menggunakan **Surat Keterangan (Suket) PP 55 / PP 23** agar rekanan pemotong hanya memotong PPh Final 0,5% (bukan PPh 23 2%).
 - **Slogan Resmi**: *Membangun Ekosistem Digital Berkelanjutan*
 - **Bidang Usaha**: Solusi & Konsultasi IT, Integrasi Sistem, dan Penyedia Platform Digital
 - **Domisili Resmi**: Slawi, Kabupaten Tegal, Jawa Tengah, Indonesia
@@ -214,13 +220,20 @@ Format standar penomoran: `[KODE]/TW/[YYYYMM]/[NOMOR_URUT_3_DIGIT]`
 
 Sistem mengunci (*atomic transaction*) tabel `document_sequences` saat nomor baru di-generate per bulan berjalan untuk mencegah nomor ganda/lompat.
 
-### B. Rumus Kalkulasi Keuangan
+### B. Rumus Kalkulasi Keuangan & Kepatuhan Pajak
 1. `Subtotal` = $\sum (\text{Quantity} \times \text{Unit Price} - \text{Item Discount})$
 2. `Discount Amount` = Jika percent: $(\text{Subtotal} \times \text{Discount Value}) / 100$, jika fixed: $\text{Discount Value}$
-3. `Taxable Amount` = $\text{Subtotal} - \text{Discount Amount}$
-4. `PPN Amount` = $(\text{Taxable Amount} \times \text{Tax Rate}) / 100$
-5. `PPh 23 Amount` = $(\text{Taxable Amount} \times \text{Withholding Tax Rate}) / 100$
-6. `Grand Total` = $\text{Taxable Amount} + \text{PPN Amount} - \text{PPh 23 Amount}$
+3. `Taxable Amount (DPP)` = $\text{Subtotal} - \text{Discount Amount}$
+4. `PPN Amount`:
+   - Jika Non-PKP (Default): $\text{Tax Rate} = 0\%$ $\implies \text{PPN Amount} = 0$.
+   - Jika PKP (Pengukuhan Sukarela / Omzet > 4,8M): $\text{Tax Rate} = 11\%$ atau $12\%$.
+   - Rumus: $(\text{Taxable Amount} \times \text{Tax Rate}) / 100$
+5. `PPh Potongan Lawan (Withholding Tax Amount)`:
+   - `0%`: Klien ritel/UMKM tanpa pemotongan.
+   - `0,5%`: Rekanan B2B/B2G menyetor PPh Final 0,5% (didukung Surat Keterangan PP 55 / PP 23 resmi).
+   - `2%`: Rekanan memotong PPh 23 standar jasa IT bila transaksi tanpa melampirkan Suket.
+   - Rumus: $(\text{Taxable Amount} \times \text{Withholding Tax Rate}) / 100$
+6. `Grand Total` = $\text{Taxable Amount} + \text{PPN Amount} - \text{Withholding Tax Amount}$
 7. `Balance Due` = $\text{Grand Total} - \text{Paid Amount}$
 
 ### C. Konversi Otomatis Quotation ➡️ Invoice

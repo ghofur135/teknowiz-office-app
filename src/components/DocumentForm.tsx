@@ -117,16 +117,26 @@ export function DocumentForm({
         ]
   );
 
+  const [company, setCompany] = useState<any>(null);
+
   useEffect(() => {
     async function loadData() {
       try {
         setLoading(true);
-        const [cRes, pRes] = await Promise.all([
+        const [cRes, pRes, compRes] = await Promise.all([
           fetch('/api/clients'),
           fetch('/api/products'),
+          fetch('/api/company'),
         ]);
         if (cRes.ok) setClients(await cRes.json());
         if (pRes.ok) setProducts(await pRes.json());
+        if (compRes.ok) {
+          const compData = await compRes.json();
+          setCompany(compData);
+          if (!isEdit && initialData?.tax_rate === undefined) {
+            setTaxRate(compData.is_pkp ? 11 : 0);
+          }
+        }
       } catch (err) {
         console.error(err);
       } finally {
@@ -577,9 +587,25 @@ export function DocumentForm({
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-              Catatan / Syarat & Ketentuan Dokumen
-            </label>
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                Catatan / Syarat & Ketentuan Dokumen
+              </label>
+              {company?.tax_footer_note && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const disclaimer = company.tax_footer_note + (company.suket_pp55_number ? ` (Suket PP 55 No: ${company.suket_pp55_number})` : '');
+                    if (!notes.includes('PT Tekno Wiz Indonesia merupakan')) {
+                      setNotes((prev: string) => prev ? `${prev}\n\n${disclaimer}` : disclaimer);
+                    }
+                  }}
+                  className="text-[10.5px] text-sky-600 hover:text-sky-800 font-semibold underline"
+                >
+                  + Sisipkan Klausul Pajak PT
+                </button>
+              )}
+            </div>
             <textarea
               rows={3}
               value={notes}
@@ -663,40 +689,57 @@ export function DocumentForm({
             </div>
 
             {/* PPN */}
-            <div className="flex items-center justify-between py-1 border-t border-slate-100 pt-2">
-              <div className="flex items-center gap-2">
-                <span className="text-slate-600 font-medium">PPN:</span>
-                <select
-                  value={taxRate}
-                  onChange={(e) => setTaxRate(Number(e.target.value))}
-                  className="text-[11px] p-1 rounded border border-slate-300 bg-slate-50"
-                >
-                  <option value="0">0% (Bebas PPN)</option>
-                  <option value="11">11% (PPN Standar)</option>
-                  <option value="12">12% (PPN 2025+)</option>
-                </select>
+            <div className="space-y-1 border-t border-slate-100 pt-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-600 font-medium">PPN:</span>
+                  <select
+                    value={taxRate}
+                    onChange={(e) => setTaxRate(Number(e.target.value))}
+                    className="text-[11px] p-1 rounded border border-slate-300 bg-slate-50 font-semibold"
+                  >
+                    <option value="0">0% (Non-PKP / Bebas PPN)</option>
+                    <option value="11">11% (PPN Standar PKP)</option>
+                    <option value="12">12% (PPN 12% PKP)</option>
+                  </select>
+                </div>
+                <span className="font-mono text-slate-900 font-semibold">
+                  + {formatRupiah(financials.tax_amount)}
+                </span>
               </div>
-              <span className="font-mono text-slate-900 font-semibold">
-                + {formatRupiah(financials.tax_amount)}
-              </span>
+              <p className="text-[10px] text-slate-500 italic">
+                {taxRate === 0
+                  ? (company?.is_pkp ? 'Bebas PPN atau tidak dipungut.' : '🛡️ PT Non-PKP: Tidak memungut PPN dari klien (sesuai aturan omzet < 4,8M).')
+                  : '⚠️ Perhatian: Pemungutan PPN mewajibkan status PKP dan penerbitan Faktur Pajak e-Faktur.'}
+              </p>
             </div>
 
-            {/* PPh 23 Withholding */}
-            <div className="flex items-center justify-between py-1 border-t border-slate-100 pt-2">
-              <div className="flex items-center gap-2">
-                <span className="text-slate-600 font-medium">Potongan PPh 23:</span>
-                <select
-                  value={withholdingTaxRate}
-                  onChange={(e) => setWithholdingTaxRate(Number(e.target.value))}
-                  className="text-[11px] p-1 rounded border border-slate-300 bg-slate-50"
-                >
-                  <option value="0">0% (Tidak ada)</option>
-                  <option value="2">2% (Jasa IT / Konsultasi)</option>
-                </select>
+            {/* Pemotongan Pajak Lawan Transaksi (Withholding Tax) */}
+            <div className="space-y-1 border-t border-slate-100 pt-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-600 font-medium">Potongan Pajak Lawan:</span>
+                  <select
+                    value={withholdingTaxRate}
+                    onChange={(e) => setWithholdingTaxRate(Number(e.target.value))}
+                    className="text-[11px] p-1 rounded border border-slate-300 bg-slate-50 font-semibold"
+                  >
+                    <option value="0">0% (Tanpa Potongan / UMKM / Ritel / B2C)</option>
+                    <option value="0.5">0,5% (PPh Final UMKM - Lampirkan Suket PP 55)</option>
+                    <option value="2">2% (PPh 23 Jasa TI - Tanpa Suket PP 55)</option>
+                  </select>
+                </div>
+                <span className="font-mono text-slate-900 font-semibold">
+                  - {formatRupiah(financials.withholding_tax_amount)}
+                </span>
               </div>
-              <span className="font-mono text-slate-900 font-semibold">
-                - {formatRupiah(financials.withholding_tax_amount)}
-              </span>
+              <p className="text-[10px] text-slate-500 italic">
+                {withholdingTaxRate === 0.5
+                  ? '💡 Rekanan B2B memotong 0,5% PPh Final dengan Suket PP 55. Berikan salinan Suket ke bendahara/finance rekanan.'
+                  : withholdingTaxRate === 2
+                  ? 'Tarif pemotongan normal PPh 23 (2%). Lampirkan Suket PP 55 agar hanya dipotong 0,5%.'
+                  : 'Klien membayar nominal penuh tanpa pemotongan PPh di muka.'}
+              </p>
             </div>
 
             {/* Grand Total */}

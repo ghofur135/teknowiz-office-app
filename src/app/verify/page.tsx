@@ -15,7 +15,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import Link from 'next/link';
-import { formatRupiah } from '@/lib/calculator';
+import { formatRupiah } from '@/lib/terbilang';
 import { OfficialStamp } from '@/components/OfficialStamp';
 
 function VerifyContent() {

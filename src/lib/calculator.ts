@@ -1,4 +1,5 @@
 import { DocumentItem } from './types';
+export { formatRupiah } from './terbilang';
 
 export interface CalculationInput {
   items: Array<{
