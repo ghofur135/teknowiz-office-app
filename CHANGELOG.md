@@ -4,6 +4,31 @@ Semua perubahan dan riwayat rilis sistem **WizBilling (TeknoWiz Invoice & Billin
 
 Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), dan proyek ini mematuhi [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2026-09-25
+
+### 🔒 Keamanan Siber & Autentikasi: Proteksi Berlapis Form Login (Brute-Force & Injection Hardening)
+- **Rate Limiting & Anti-Brute Force Tingkat Lanjut (`src/lib/rate-limiter.ts`, `/api/auth/login`)**:
+  - Implementasi *In-Memory Sliding-Window Rate Limiter* untuk memitigasi serangan *Brute-Force*, *Credential Stuffing*, dan *Dictionary Attacks*.
+  - Kebijakan proteksi ganda:
+    - **Per-Akun/IP**: Maksimal 5 kali kegagalan login dalam kurun 15 menit. Jika terlampaui, akun/koneksi dikunci sementara selama 15 menit (HTTP 429 *Too Many Requests* disertai header `Retry-After`).
+    - **Global Per-IP**: Maksimal 15 kali percobaan gagal dari satu IP dalam 15 menit, memicu pemblokiran IP selama 30 menit untuk meredam serangan terdistribusi.
+    - Notifikasi sisa percobaan otomatis muncul pada formulir login saat percobaan gagal menyisakan $\le 3$ kali kesempatan.
+    - Reset counter instan begitu pengguna berhasil memasukkan kredensial yang valid.
+- **Peningkatan Algoritma Hashing: Salted Scrypt Key Derivation Function (KDF) (`src/lib/auth.ts`)**:
+  - Menggantikan *single-iteration* SHA-256 legacy dengan algoritma **Scrypt** berstandar rekomendasi OWASP, dilengkapi *random salt* 16-byte kriptografis per-pengguna (`scrypt:<salt>:<hash>`).
+  - Fitur **Silent Auto-Upgrade**: Pengguna lama atau seed default yang masih menggunakan format legacy (SHA-256 / plaintext) akan secara otomatis dan transparan di-rehash ke salted Scrypt saat pertama kali berhasil login tanpa mengganggu proses autentikasi.
+- **Proteksi Terhadap Timing Attack & Username Enumeration (`auth.ts`)**:
+  - Implementasi komputasi dummy Scrypt saat email pengguna tidak terdaftar di sistem. Hal ini menyamakan waktu respon server (*latency equalized*) sehingga penyerang tidak dapat menebak keberadaan email terdaftar melalui perbedaan durasi respon (mencegah *User Enumeration*).
+  - Pengecekan password dan token signature menggunakan komparasi waktu-konstan (`crypto.timingSafeEqual`) untuk menangkal serangan *timing side-channel*.
+- **Verifikasi Kriptografis Sesi pada Middleware Edge (`src/middleware.ts`)**:
+  - Peningkatan validasi token cookie `wiz_session` di middleware Next.js menggunakan **Web Crypto API (`crypto.subtle`)** yang kompatibel penuh dengan Edge runtime.
+  - Memverifikasi HMAC-SHA256 signature secara matematis dan validitas waktu kedaluwarsa (`exp`). Token palsu atau hasil manipulasi (*token tampering*) langsung ditolak sebelum dapat menyentuh rute dashboard atau private API.
+  - Pengamanan rute privat `/api/*`: Akses API internal otomatis ditolak dengan status HTTP 401 jika cookie sesi tidak sah.
+- **Pertahanan Terhadap Injection & Eksploitasi Payload**:
+  - **SQL Injection**: Seluruh query autentikasi dan mutasi data database menggunakan *Parameterized Queries* (`@libsql/client` driver) sehingga input pengguna diperlakukan murni sebagai parameter data, bukan kode SQL executable.
+  - **Prototype / Object Injection**: Sanitasi ketat memeriksa tipe data primitif `string` sebelum pemrosesan.
+  - **DoS / Buffer Overflow**: Pembatasan panjang input email ($\le 100$ karakter) dan password ($\le 128$ karakter) untuk mencegah serangan *Regular Expression Denial of Service* (ReDoS) dan *memory exhaustion*.
+
 ---
 
 ## [1.10.0] - 2026-09-25
