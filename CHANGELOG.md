@@ -4,6 +4,33 @@ Semua perubahan dan riwayat rilis sistem **WizBilling (TeknoWiz Invoice & Billin
 
 Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), dan proyek ini mematuhi [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2026-09-25
+
+### 🛡️ Security Audit Remediation & Hardening (Temuan Audit Keamanan Siber)
+- **Penegakan Protokol HTTPS Otomatis (`src/middleware.ts`)**:
+  - Menambahkan pengalihan permanen (HTTP 301 *Moved Permanently*) dari trafik `http://` ke `https://` pada middleware untuk memitigasi risiko serangan *Man-In-The-Middle* (MITM) saat diakses dari jaringan publik.
+- **Implementasi Security Response Headers Komprehensif (`next.config.js`)**:
+  - `Strict-Transport-Security` (HSTS): `max-age=63072000; includeSubDomains; preload` (memaksa browser hanya berkomunikasi via enkripsi HTTPS).
+  - `X-Frame-Options`: `SAMEORIGIN` (mencegah eksploitasi serangan *Clickjacking* dan *UI redressing*).
+  - `X-Content-Type-Options`: `nosniff` (mencegah *MIME-sniffing* browser pada berkas statis).
+  - `Referrer-Policy`: `strict-origin-when-cross-origin` (melindungi privasi query string URL).
+  - `Permissions-Policy`: `camera=(), microphone=(), geolocation=()` (membatasi hak akses fitur perangkat yang tidak diperlukan).
+  - `X-DNS-Prefetch-Control`: `on`.
+- **Penyembunyian Fingerprint Framework (`next.config.js`)**:
+  - Mengaktifkan `poweredByHeader: false` untuk menghapus header `x-powered-by: Next.js` dari seluruh respon HTTP guna mempersulit pemetaan teknologi oleh pihak luar (*information disclosure mitigation*).
+- **Ekstraksi Client IP Aman & Multi-Tier Rate Limiting (`src/app/api/auth/login/route.ts`)**:
+  - Mengintegrasikan header resmi Cloudflare `cf-connecting-ip` sebagai identitas IP klien terpercaya, kebal terhadap pemalsuan header `x-forwarded-for`.
+  - Menerapkan arsitektur 3-Tier Rate Limiting:
+    - Bucket 1: `login:email:{email}` (Maksimal 5x gagal dalam 15 menit per-email).
+    - Bucket 2: `login:ip:{ip}` (Maksimal 10x gagal dalam 15 menit per-IP).
+    - Bucket 3: `login:pair:{ip}:{email}` (Maksimal 5x gagal dalam 15 menit per-kombinasi).
+- **Progressive Anti-Bot Math CAPTCHA (`src/app/login/page.tsx`)**:
+  - Implementasi tantangan verifikasi matematika dinamis yang otomatis aktif ketika terjadi kegagalan login >= 2 kali berturut-turut untuk menghambat laju *automated dictionary/brute-force tools*.
+- **Sanitasi Parameter Redirect (Anti Open-Redirect Vulnerability) (`src/app/login/page.tsx`)**:
+  - Validasi ketat parameter URL `?redirect=` agar hanya menerima *relative path* internal (`/`) dan menolak manipulasi URL eksternal berbahaya (`//`, `\`).
+- **Realtime API Metric Consistency (`src/app/api/**/route.ts`)**:
+  - Menginjeksi `export const dynamic = 'force-dynamic'` dan `export const revalidate = 0` pada seluruh 17 endpoint API agar pembacaan metrik dan status tagihan selalu *fresh* dari database SQLite tanpa tertahan cache statis Next.js build.
+
 ## [1.11.0] - 2026-09-25
 
 ### 🔒 Keamanan Siber & Autentikasi: Proteksi Berlapis Form Login (Brute-Force & Injection Hardening)

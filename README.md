@@ -271,4 +271,17 @@ sudo certbot --nginx -d billing.teknowiz.id
 
 ---
 
+
+---
+
+## 🛡️ Arsitektur Keamanan Siber (Security & Hardening v1.12.0)
+
+Sistem WizBilling telah melewati audit keamanan siber (*Black-box Penetration Testing*) dan diperkuat dengan lapisan pertahanan:
+1. **Enforce HTTPS (301 Permanent Redirect)**: Seluruh akses plaintext dialihkan secara otomatis ke protokol terenkripsi HTTPS.
+2. **Security Headers Lengkap**: Dilengkapi dengan `Strict-Transport-Security` (HSTS Preload), `X-Frame-Options` (Anti-Clickjacking), `X-Content-Type-Options` (nosniff), `Referrer-Policy`, dan `Permissions-Policy`.
+3. **Penyembunyian Fingerprint**: Header `x-powered-by: Next.js` dinonaktifkan (`poweredByHeader: false`) untuk mencegah identifikasi teknologi oleh scanner eksternal.
+4. **Multi-Tier Rate Limiting & Cloudflare Integration**: Proteksi serangan *Brute-Force* dan *Credential Stuffing* dengan 3 bucket rate-limiting berbasis `cf-connecting-ip` (per-Email, per-IP, dan per-Pair).
+5. **Progressive Anti-Bot Math CAPTCHA**: Tantangan verifikasi matematika dinamis yang otomatis aktif saat terjadi kegagalan autentikasi beruntun (>= 2 kali).
+6. **Anti Open-Redirect Sanitizer**: Validasi ketat parameter `?redirect=` untuk mencegah pengalihan pengguna ke URL berbahaya di luar domain.
+
 *Disusun untuk operasional resmi PT Tekno Wiz Indonesia.*

@@ -1,6 +1,6 @@
 {
   "name": "teknowiz-office-app",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "description": "TeknoWiz Invoice & Billing Management System (WizBilling)",
   "scripts": {
     "dev": "next dev",
