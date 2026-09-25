@@ -7,6 +7,9 @@ Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.co
 ## [1.12.0] - 2026-09-25
 
 ### 🛡️ Security Audit Remediation & Hardening (Temuan Audit Keamanan Siber)
+- **Dokumentasi Roadmap & Skenario Pengembangan Lanjutan (`docs/SKENARIO-PENGEMBANGAN-TAHAP-LANJUTAN.md`)**:
+  - Menyusun cetak biru (*blueprint*) teknis 5 modul strategis: Modul Kepatuhan Pajak PPh Final 0,5% (PP 55/2022), Integrasi Notifikasi WhatsApp Gateway (Wizly/GOWA), Template Dokumen BAST & Watermark Dinamis, Audit Trail Log & RBAC Multi-Peran, serta Endpoint Health Check dan Bot Monitoring Telegram.
+
 - **Penegakan Protokol HTTPS Otomatis (`src/middleware.ts`)**:
   - Menambahkan pengalihan permanen (HTTP 301 *Moved Permanently*) dari trafik `http://` ke `https://` pada middleware untuk memitigasi risiko serangan *Man-In-The-Middle* (MITM) saat diakses dari jaringan publik.
 - **Implementasi Security Response Headers Komprehensif (`next.config.js`)**:

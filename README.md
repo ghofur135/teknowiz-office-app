@@ -284,4 +284,12 @@ Sistem WizBilling telah melewati audit keamanan siber (*Black-box Penetration Te
 5. **Progressive Anti-Bot Math CAPTCHA**: Tantangan verifikasi matematika dinamis yang otomatis aktif saat terjadi kegagalan autentikasi beruntun (>= 2 kali).
 6. **Anti Open-Redirect Sanitizer**: Validasi ketat parameter `?redirect=` untuk mencegah pengalihan pengguna ke URL berbahaya di luar domain.
 
+
+---
+
+## 🗺️ Roadmap & Skenario Pengembangan Lanjutan
+
+Rencana arsitektur dan skenario implementasi kode fitur prioritas berikutnya (Modul Pajak PP 55, Integrasi WhatsApp Gateway, Berita Acara Serah Terima / BAST, Audit Trail RBAC, dan Bot Health Monitoring) telah disusun lengkap pada:
+👉 **[`docs/SKENARIO-PENGEMBANGAN-TAHAP-LANJUTAN.md`](docs/SKENARIO-PENGEMBANGAN-TAHAP-LANJUTAN.md)**
+
 *Disusun untuk operasional resmi PT Tekno Wiz Indonesia.*
