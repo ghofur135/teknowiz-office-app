@@ -30,6 +30,7 @@ const securityHeaders = [
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   poweredByHeader: false,
   env: {
     NEXT_PUBLIC_APP_VERSION: pkg.version,
