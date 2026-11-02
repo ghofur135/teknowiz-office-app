@@ -1,6 +1,6 @@
 {
   "name": "teknowiz-office-app",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "description": "TeknoWiz Invoice & Billing Management System (WizBilling)",
   "scripts": {
     "dev": "next dev",
@@ -23,9 +23,11 @@
   "type": "commonjs",
   "dependencies": {
     "@libsql/client": "^0.18.0",
+    "@types/pg": "^8.23.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.47.0",
     "next": "^14.2.23",
+    "pg": "^8.23.1",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

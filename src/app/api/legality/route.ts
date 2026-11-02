@@ -79,7 +79,7 @@ export async function POST(request: Request) {
       sql: `INSERT INTO company_documents (
         document_category, title, document_number, file_path, file_name,
         file_size, file_type, issue_date, expiry_date, is_lifetime, notes
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`,
       args: [
         category,
         title.trim(),
@@ -95,7 +95,7 @@ export async function POST(request: Request) {
       ]
     });
 
-    const newId = Number(insertRes.lastInsertRowid);
+    const newId = Number(insertRes.rows[0]?.id);
     const createdDoc = await db.execute({
       sql: 'SELECT * FROM company_documents WHERE id = ?',
       args: [newId]

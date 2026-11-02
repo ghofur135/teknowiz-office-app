@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.14.0] - 2026-11-02
+### Added
+- **Native PostgreSQL & Neon.tech Migration**:
+  - Implementasi adapter database PostgreSQL pooler (`pg`) menggantikan `@libsql/client` SQLite.
+  - Kompatibilitas query dinamis otomatis: parsing positional parameter `?` ke parameter PostgreSQL (`, , ...`).
+  - Konversi sintaks fungsi tanggal SQLite `strftime()` ke PostgreSQL `to_char()`.
+  - Migrasi seluruh skema DDL dan data 10 tabel dari SQLite ke Neon Serverless PostgreSQL (`db_wizbilling_dev` dan `db_wizbilling_prod`).
+  - Penambahan klausa `RETURNING id` pada insert dokumen legalitas untuk kompatibilitas PostgreSQL.
+
+
 Semua perubahan dan riwayat rilis sistem **WizBilling (TeknoWiz Invoice & Billing Management System)** dicatat secara lengkap dalam dokumen ini.
 
 Format pencatatan mengikuti standar [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), dan proyek ini mematuhi [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
